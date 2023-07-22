@@ -7,7 +7,7 @@
     "start-dev:watch": "tsc -w",
     "start-dev:run": "nodemon build/server.js",
     "start-dev": "concurrently yarn:start-dev:*",
-    "prettify": "prettier --write src/**/*.{ts,json,md}",
+    "make-pretty": "prettier --write src/**/*.{ts,json,md}",
     "prepare": "husky install"
   },
   "devDependencies": {
@@ -23,7 +23,6 @@
     "@types/node": "^18.7.23",
     "cors": "^2.8.5",
     "express": "^4.18.1",
-    "mongoose": "^6.6.2",
     "winston": "^3.8.2"
   }
 }
