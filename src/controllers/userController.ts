@@ -29,9 +29,10 @@ function makeCreateUserController(): TExpressCallback {
     const createUserDB = {
       saveUser,
     };
-    const [result, unHandledErr] = await errHandlerAsync<
-      IinteractorReturn<IUserDocument>
-    >(createUserInteractor(username, password, email, createUserDB));
+    const [result, unHandledErr] =
+      await errHandlerAsync<IinteractorReturn<IUserDocument>>( // prettier-ignore
+        createUserInteractor(username, password, email, createUserDB),
+      );
     if (unHandledErr !== null) {
       appErrorHandler(unHandledErr, req, res, next);
       return;
