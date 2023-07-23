@@ -12,7 +12,7 @@ class HRPerson extends User {
     address: string,
     dob: Date,
     appDate: Date,
-    role: TRole,
+    role: TRole = "hrPerson",
   ) {
     super(
       empId,
@@ -26,7 +26,6 @@ class HRPerson extends User {
       appDate,
       role,
     );
-    this.canRegister = true;
   }
   generatePerformanceReport() {}
   createSchedules() {}

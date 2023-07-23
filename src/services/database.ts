@@ -1,20 +1,20 @@
-import mongoose from "mongoose";
-import { GET_DB_URL } from "../config";
+import { Sequelize } from "sequelize-typescript";
+import dotenv from "dotenv";
+import errHandlerAsync from "../utils/error-handling/errHandlerAsync";
+dotenv.config();
 
-mongoose.connection.once("open", () => {
-  console.info("MongoDB connection ready!");
-});
-
-mongoose.connection.on("error", (err) => {
-  console.error("MongoDB connection error:", err);
-});
-
+let sequelize: Sequelize;
 async function dbConnect() {
-  await mongoose.connect(GET_DB_URL());
+  sequelize = new Sequelize("micro_credit", "root", process.env.DB_PASSWORD, {
+    host: "localhost",
+    dialect: "mysql",
+  });
+  const [, err] = await errHandlerAsync(sequelize.authenticate());
+
+  if (err) console.error("Unable to connect to the database:", err);
+  else console.log("Database connection established!");
 }
 
-async function dbDisconnect() {
-  await mongoose.disconnect();
-}
+async function dbDisconnect() {}
 
-export { dbConnect, dbDisconnect };
+export { dbConnect, sequelize };

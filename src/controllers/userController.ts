@@ -1,13 +1,13 @@
-import { createUser as createUserInteractor } from "../interactors/user.interactor";
+import { createUser } from "../interactors/user.interactor";
 import { TExpressCallback } from "../types/expressTypes";
 import AppResponse from "../utils/AppResponse";
 import AppError from "../utils/error-handling/AppErrror";
 import errHandlerAsync from "../utils/error-handling/errHandlerAsync";
 import { IinteractorReturn } from "../types/generalTypes";
 import appErrorHandler from "../utils/error-handling/appErrorHandler";
-import { getUser, saveUser } from "../data-access/user.db";
-import { validateStrings } from "../utils/validateReqProperties";
+import { getUserById, saveUser } from "../data-access/user.db";
 import User from "../domain/User";
+import UserModel from "../data-access/models/userModel";
 
 /**
  * Factory function to create an Express middleware that handles the creation of a user.
@@ -15,18 +15,32 @@ import User from "../domain/User";
  */
 function makeCreateUserController(): TExpressCallback {
   return async (req, res, next) => {
-    const { empId, personalDetails } = req.body;
+    let { empIdOfCaller, registrantDetails } = req.body;
 
     // validating req.body properties
+    registrantDetails = {
+      ...registrantDetails,
+      empId: registrantDetails.empId || null,
+      appDate: new Date(),
+      role: null,
+    };
+    if (
+      !(registrantDetails instanceof User) ||
+      !empIdOfCaller ||
+      typeof empIdOfCaller === "string"
+    ) {
+      AppError.badRequest("Invalid request body");
+      return;
+    }
 
     // This object containing related db functions will be injected to interactor.
     const createUserDB = {
       saveUser: saveUser,
-      getUser: getUser,
+      getUser: getUserById,
     };
     const [result, unHandledErr] =
-      await errHandlerAsync<IinteractorReturn<User>>( // prettier-ignore
-        createUserInteractor(null, personalDetails as any, createUserDB),
+      await errHandlerAsync<IinteractorReturn<UserModel>>( // prettier-ignore
+        createUser(null, registrantDetails, createUserDB),
       );
     if (unHandledErr !== null) {
       appErrorHandler(unHandledErr, req, res, next);

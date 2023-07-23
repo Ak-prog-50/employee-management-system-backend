@@ -1,3 +1,4 @@
+import { TRole } from "../types/generalTypes";
 import User from "./User";
 
 class Manager extends User {
@@ -11,6 +12,7 @@ class Manager extends User {
     address: string,
     dob: Date,
     appDate: Date,
+    role: TRole = "manager",
   ) {
     super(
       empId,
@@ -22,6 +24,7 @@ class Manager extends User {
       address,
       dob,
       appDate,
+      role,
     );
   }
   generateTargetReports() {}

@@ -1,15 +1,29 @@
-import { IPersonalDetails, TSaveUser } from "../interactors/user.interactor";
+import UserModel from "../data-access/models/userModel";
+import { TSaveUser } from "../interactors/user.interactor";
 import { TRole } from "../types/generalTypes";
 import AppError from "../utils/error-handling/AppErrror";
 import Employee from "./Employee";
+import HRPerson from "./HRPerson";
+import Manager from "./Manager";
+
+export interface IUserParams {
+  empId: number | null;
+  name: string;
+  contactNo: string;
+  email: string;
+  age: number;
+  designation: string;
+  address: string;
+  dob: Date;
+  appDate: Date;
+  role: TRole;
+}
 
 abstract class User {
-  protected canRegister: boolean = false;
-
   constructor(
     public empId: number | null,
     public name: string,
-    public contactNo: number,
+    public contactNo: string,
     public email: string,
     public age: number,
     public designation: string,
@@ -19,22 +33,15 @@ abstract class User {
     public role: TRole | null,
   ) {}
   async registerEmp(
-    personalDetails: IPersonalDetails,
+    userDetails: User,
     saveUser: TSaveUser,
-  ): Promise<any> {
-    if (this.canRegister) {
-      const employee = new Employee(
-        null,
-        personalDetails.name,
-        personalDetails.contactNo,
-        personalDetails.email,
-        personalDetails.age,
-        personalDetails.designation,
-        personalDetails.address,
-        personalDetails.dob,
-        new Date(),
-        "employee",
-      );
+  ): Promise<UserModel | AppError> {
+    const canRegister = this instanceof HRPerson || this instanceof Manager;
+    if (canRegister) {
+      const employee = new Employee({
+        ...userDetails,
+        role: "employee",
+      });
       return await saveUser(employee);
     } else {
       return AppError.notAllowed("User doesn't have permission to register!");

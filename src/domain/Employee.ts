@@ -1,30 +1,18 @@
-import { TRole } from "../types/generalTypes";
-import User from "./User";
+import User, { IUserParams } from "./User";
 
 class Employee extends User {
-  constructor(
-    empId: number | null,
-    name: string,
-    contactNo: number,
-    email: string,
-    age: number,
-    designation: string,
-    address: string,
-    dob: Date,
-    appDate: Date,
-    role: TRole,
-  ) {
+  constructor(params: IUserParams) {
     super(
-      empId,
-      name,
-      contactNo,
-      email,
-      age,
-      designation,
-      address,
-      dob,
-      appDate,
-      role,
+      params.empId,
+      params.name,
+      params.contactNo,
+      params.email,
+      params.age,
+      params.designation,
+      params.address,
+      params.dob,
+      params.appDate,
+      params.role,
     );
   }
   requestRegistrationApproval() {}
