@@ -1,26 +1,48 @@
-class User {
-  userName: string;
-  email: string;
-  avatarUrl: string | null;
-  createdAt: Date;
+import { IPersonalDetails, TSaveUser } from "../interactors/user.interactor";
+import { TRole } from "../types/generalTypes";
+import AppError from "../utils/error-handling/AppErrror";
+import Employee from "./Employee";
 
-  constructor(name: string, email: string, avatarUrl: string | null) {
-    this.userName = name;
-    this.email = email;
-    this.avatarUrl = avatarUrl;
-    this.createdAt = new Date();
-  }
+abstract class User {
+  protected canRegister: boolean = false;
 
-  // Business logic to validate the user's email
-  isValidEmail(): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(this.email);
+  constructor(
+    public empId: number | null,
+    public name: string,
+    public contactNo: number,
+    public email: string,
+    public age: number,
+    public designation: string,
+    public address: string,
+    public dob: Date,
+    public appDate: Date,
+    public role: TRole | null,
+  ) {}
+  async registerEmp(
+    personalDetails: IPersonalDetails,
+    saveUser: TSaveUser,
+  ): Promise<any> {
+    if (this.canRegister) {
+      const employee = new Employee(
+        null,
+        personalDetails.name,
+        personalDetails.contactNo,
+        personalDetails.email,
+        personalDetails.age,
+        personalDetails.designation,
+        personalDetails.address,
+        personalDetails.dob,
+        new Date(),
+        "employee",
+      );
+      return await saveUser(employee);
+    } else {
+      return AppError.notAllowed("User doesn't have permission to register!");
+    }
   }
-
-  // Business logic to check if the user has an avatar
-  hasAvatar(): boolean {
-    return this.avatarUrl !== null;
-  }
+  updateEmp() {}
+  deleteEmp() {}
+  provideFeedback() {}
 }
 
-export { User };
+export default User;

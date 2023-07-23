@@ -1,16 +1,29 @@
-import { IUserDocument, UserModel } from "./models/userModel";
-import { User } from "../domain/User";
-
-type TSaveUser = (user: User) => Promise<IUserDocument>;
+import Employee from "../domain/Employee";
+import HRPerson from "../domain/HRPerson";
+import Manager from "../domain/Manager";
+import User from "../domain/User";
+import { TGetUser, TSaveUser } from "../interactors/user.interactor";
+import logger from "../logger";
 
 const saveUser: TSaveUser = async function (user) {
-  const { userName, email } = user;
-  const createdUser = new UserModel({
-    userName,
-    email,
-    // etc..
-  });
-  return await createdUser.save();
+  // do a db query save user object.
+  return user;
 };
 
-export { saveUser, TSaveUser };
+const getUser: TGetUser = async (empId) => {
+  // do a db query get user object.
+  let user: User = new Employee();
+  switch (user.role) {
+    case "employee":
+      return new Employee();
+    case "manager":
+      return new Manager();
+    case "hrPerson":
+      return new HRPerson();
+    // default:
+    //   logger.error("Invalid user role");
+    //   break;
+  }
+};
+
+export { getUser, saveUser };

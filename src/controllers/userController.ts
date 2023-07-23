@@ -5,9 +5,9 @@ import AppError from "../utils/error-handling/AppErrror";
 import errHandlerAsync from "../utils/error-handling/errHandlerAsync";
 import { IinteractorReturn } from "../types/generalTypes";
 import appErrorHandler from "../utils/error-handling/appErrorHandler";
-import { saveUser } from "../data-access/user.db";
+import { getUser, saveUser } from "../data-access/user.db";
 import { validateStrings } from "../utils/validateReqProperties";
-import { IUserDocument } from "../data-access/models/userModel";
+import User from "../domain/User";
 
 /**
  * Factory function to create an Express middleware that handles the creation of a user.
@@ -15,23 +15,18 @@ import { IUserDocument } from "../data-access/models/userModel";
  */
 function makeCreateUserController(): TExpressCallback {
   return async (req, res, next) => {
-    let { username, password, email } = req.body;
+    const { empId, personalDetails } = req.body;
 
     // validating req.body properties
-    const inputStrings: (string | undefined)[] = [username, password, email];
-    if (!validateStrings(inputStrings)) {
-      AppError.badRequest("Invalid request");
-      return;
-    }
-    [username, password, email] = inputStrings;
 
     // This object containing related db functions will be injected to interactor.
     const createUserDB = {
-      saveUser,
+      saveUser: saveUser,
+      getUser: getUser,
     };
     const [result, unHandledErr] =
-      await errHandlerAsync<IinteractorReturn<IUserDocument>>( // prettier-ignore
-        createUserInteractor(username, password, email, createUserDB),
+      await errHandlerAsync<IinteractorReturn<User>>( // prettier-ignore
+        createUserInteractor(null, personalDetails as any, createUserDB),
       );
     if (unHandledErr !== null) {
       appErrorHandler(unHandledErr, req, res, next);

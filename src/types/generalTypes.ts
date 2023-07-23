@@ -1,6 +1,7 @@
 import AppError from "../utils/error-handling/AppErrror";
 
 type TRequestProperty = string | undefined;
+type TRole = "employee" | "manager" | "hrPerson";
 
 interface IinteractorReturn<T = unknown> {
   appError: AppError | null;
@@ -15,4 +16,4 @@ function isIinteractorReturn(value: any): value is IinteractorReturn {
   );
 }
 
-export { TRequestProperty, IinteractorReturn, isIinteractorReturn };
+export { TRequestProperty, IinteractorReturn, isIinteractorReturn, TRole };
