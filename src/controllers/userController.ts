@@ -9,6 +9,7 @@ import { getUserById, saveUser } from "../data-access/user.db";
 import User from "../domain/User";
 import UserModel from "../data-access/models/userModel";
 import Employee from "../domain/Employee";
+import { authenticateUser } from "../services/auth";
 
 /**
  * @type {TExpressAsyncCallback} An Express middleware function that will be passed into 'create-user' route.
@@ -76,4 +77,18 @@ const createUserController: TExpressAsyncCallback = async function (
   }
 };
 
-export { createUserController };
+/**
+ * email and password should be present in req.body.
+ * it will be extracted by passport.js. Upon login user
+ * object will be sent to client.
+ */
+const loginUserController: TExpressAsyncCallback = async function (
+  req,
+  res,
+  next,
+) {
+  // If the authentication is successful, the user object will be available in req.user
+  authenticateUser(req, res, next);
+};
+
+export { createUserController, loginUserController };

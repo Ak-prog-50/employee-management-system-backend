@@ -68,6 +68,7 @@ passport.deserializeUser(async (id: number, done) => {
 });
 
 // Helper function for passport authentication
+// todo: maybe move res.send code to controller for better readabilty?
 export const authenticateUser: TExpressCallback = (req, res, next) => {
   const authCallBack: AuthenticateCallback = (err, user, info) => {
     if (err) {
@@ -93,7 +94,7 @@ export const authenticateUser: TExpressCallback = (req, res, next) => {
         appErrorHandler(loginErr, req, res, next);
         return;
       }
-      AppResponse.success(res, "Logged In!");
+      AppResponse.success(res, "Logged In!", user);
       return;
       // // Proceed to the next middleware or route handler
       // return next();

@@ -11,7 +11,6 @@ import dotenv from "dotenv";
 import passport from "passport";
 import "./services/auth";
 import session from "express-session";
-import { authenticateUser } from "./services/auth";
 
 const { PORT } = process.env;
 const app = express();
@@ -51,12 +50,6 @@ app.get("/", (req: IRequest, res: IResponse) => {
 });
 
 app.use("/user", userRouter());
-
-app.post("/login", (req, res, next) => {
-  // If the authentication is successful, the user object will be available in req.user
-  // You can redirect the user to the home page or any other authenticated route here
-  authenticateUser(req, res, next);
-});
 
 app.all("*", (req: IRequest, res: IResponse, next: NextFunction): void => {
   appErrorHandler(AppError.notFound("Route not found"), req, res, next);
