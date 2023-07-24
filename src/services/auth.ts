@@ -7,6 +7,7 @@ import { findUserByEmail, getUserById } from "../data-access/user.db";
 import AppResponse from "../utils/AppResponse";
 import logger from "../logger";
 import AppError from "../utils/error-handling/AppErrror";
+import { comparePwd } from "../utils/pwdHelpers";
 
 // Configure the local strategy for Passport
 passport.use(
@@ -26,11 +27,11 @@ passport.use(
         }
 
         // Check if the provided password matches the hashed password in the database
-        // const isPasswordValid = await bcrypt.compare(
-        //   password,
-        //   user.protectedPassword,
-        // );
-        const isPasswordValid = password === user.protectedPassword;
+        const isPasswordValid = await comparePwd(
+          password,
+          user.protectedPassword,
+        );
+        // const isPasswordValid = password === user.protectedPassword;
 
         if (!isPasswordValid) {
           return done(null, false, { message: "Incorrect password!" });

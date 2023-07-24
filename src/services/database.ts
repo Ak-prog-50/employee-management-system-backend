@@ -5,6 +5,7 @@ import UserModel from "../data-access/models/userModel";
 import { saveUser } from "../data-access/user.db";
 import HRPerson from "../domain/HRPerson";
 import { SEED_HR_PERSON_ID } from "../config";
+import { protectPwd } from "../utils/pwdHelpers";
 
 dotenv.config();
 
@@ -40,7 +41,8 @@ async function seedDB() {
     dob: new Date("1993-07-24"),
     appDate: new Date(),
   });
-  await saveUser(seedHRPerson, "password").catch((err) =>
+  const protectedPwd = await protectPwd("password");
+  await saveUser(seedHRPerson, protectedPwd).catch((err) =>
     console.error("error at seeding db", err),
   );
 }
