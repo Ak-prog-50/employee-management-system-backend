@@ -8,6 +8,11 @@ import AppError from "./utils/error-handling/AppErrror";
 import appErrorHandler from "./utils/error-handling/appErrorHandler";
 import { dbConnect, seedDB } from "./services/database";
 import dotenv from "dotenv";
+import passport from "passport";
+import "./services/auth";
+import session from "express-session";
+import { authenticateUser } from "./services/auth";
+
 const { PORT } = process.env;
 const app = express();
 dotenv.config();
@@ -26,6 +31,19 @@ app.use(
   }),
 );
 app.use(express.json());
+// Enable session management
+app.use(
+  session({
+    secret: "keyboard cat",
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: true },
+  }),
+);
+
+// Initialize Passport and set up session persistence
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Map routes
 app.get("/", (req: IRequest, res: IResponse) => {
@@ -33,6 +51,12 @@ app.get("/", (req: IRequest, res: IResponse) => {
 });
 
 app.use("/user", userRouter());
+
+app.post("/login", (req, res, next) => {
+  // If the authentication is successful, the user object will be available in req.user
+  // You can redirect the user to the home page or any other authenticated route here
+  authenticateUser(req, res, next);
+});
 
 app.all("*", (req: IRequest, res: IResponse, next: NextFunction): void => {
   appErrorHandler(AppError.notFound("Route not found"), req, res, next);

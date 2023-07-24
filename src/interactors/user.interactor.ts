@@ -3,7 +3,7 @@ import User from "../domain/User";
 import { IinteractorReturn } from "../types/generalTypes";
 import AppError from "../utils/error-handling/AppErrror";
 
-export type TSaveUser = (user: User) => Promise<UserModel>;
+export type TSaveUser = (user: User, password: string) => Promise<UserModel>;
 export type TGetUserById = (empId: number) => Promise<User | null>;
 
 interface ICreateUserDB {

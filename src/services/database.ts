@@ -24,7 +24,7 @@ async function dbConnect() {
   else {
     console.log("Database connection established!");
     sequelize.addModels([UserModel]);
-    sequelize.sync({ match: /_development$/ });
+    await sequelize.sync({ force: true, match: /_development$/ });
   }
 }
 
@@ -40,7 +40,7 @@ async function seedDB() {
     dob: new Date("1993-07-24"),
     appDate: new Date(),
   });
-  await saveUser(seedHRPerson).catch((err) =>
+  await saveUser(seedHRPerson, "password").catch((err) =>
     console.error("error at seeding db", err),
   );
 }

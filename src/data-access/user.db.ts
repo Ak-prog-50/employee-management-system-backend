@@ -6,9 +6,9 @@ import { TGetUserById, TSaveUser } from "../interactors/user.interactor";
 import logger from "../logger";
 import UserModel from "./models/userModel";
 
-const saveUser: TSaveUser = async function (user: User) {
+const saveUser: TSaveUser = async function (user: User, password: string) {
   // do a db query save user object.
-  const userModel = new UserModel({ ...user });
+  const userModel = new UserModel({ ...user, protectedPassword: password });
   return await userModel.save();
 };
 
@@ -34,4 +34,8 @@ const getUserById: TGetUserById = async (empId) => {
   }
 };
 
-export { getUserById, saveUser };
+async function findUserByEmail(email: string): Promise<UserModel | null> {
+  return await UserModel.findOne({ where: { email: email } });
+}
+
+export { getUserById, saveUser, findUserByEmail };

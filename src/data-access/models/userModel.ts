@@ -37,6 +37,12 @@ class UserModel extends Model implements IUserParams {
   })
   email!: string;
 
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  protectedPassword!: string;
+
   @Column(DataType.INTEGER)
   age!: number;
 

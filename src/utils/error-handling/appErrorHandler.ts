@@ -18,7 +18,9 @@ function appErrorHandler(
     res.status(err.statusCode).json({ error: err.name, message: err.message });
     return;
   }
-  logger?.error(winston_format("unavailable", "Unhandled Error\n"), err);
+  // todo: check why logger.error is not loggin err object
+  logger.error(winston_format("unavailable", "Unhandled Error\n"), err);
+  console.error(winston_format("unavailable", "Unhandled Error\n"), err);
   res.status(500).json({ error: "error", message: "Something went wrong!" });
 }
 
