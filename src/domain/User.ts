@@ -3,8 +3,8 @@ import { TSaveUser } from "../interactors/user.interactor";
 import { TRole } from "../types/generalTypes";
 import AppError from "../utils/error-handling/AppErrror";
 import Employee from "./Employee";
-import HRPerson from "./HRPerson";
-import Manager from "./Manager";
+// import HRPerson from "./HRPerson";
+// import Manager from "./Manager";
 
 export interface IUserParams {
   empId: number | null;
@@ -16,7 +16,7 @@ export interface IUserParams {
   address: string;
   dob: Date;
   appDate: Date;
-  role: TRole;
+  role: TRole | null;
 }
 
 abstract class User {
@@ -36,6 +36,9 @@ abstract class User {
     userDetails: User,
     saveUser: TSaveUser,
   ): Promise<UserModel | AppError> {
+    const HRPerson = (await import("./HRPerson")).default;
+    const Manager = (await import("./Manager")).default;
+
     const canRegister = this instanceof HRPerson || this instanceof Manager;
     if (canRegister) {
       const employee = new Employee({

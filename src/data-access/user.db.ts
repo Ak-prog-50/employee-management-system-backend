@@ -26,8 +26,8 @@ const getUserById: TGetUserById = async (empId) => {
       });
     // case "manager":
     //   return new Manager({...user});
-    // case "hrPerson":
-    //   return new HRPerson({...user});
+    case "hrPerson":
+      return new HRPerson({ ...user });
     default:
       logger.error("Invalid user role");
       return null;

@@ -5,7 +5,7 @@ class Manager extends User {
   constructor(
     empId: number,
     name: string,
-    contactNo: number,
+    contactNo: string,
     email: string,
     age: number,
     designation: string,

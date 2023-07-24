@@ -1,9 +1,10 @@
 import { Router } from "express";
-import { makeCreateUserController } from "../controllers/userController";
+import { createUserController } from "../controllers/userController";
+import wrapAsyncExpress from "../utils/error-handling/wrapExpressAsync";
 
 export default function userRouter() {
   const router = Router();
-  router.post("/create-user", makeCreateUserController());
+  router.post("/create-user", wrapAsyncExpress(createUserController));
 
   return router;
 }

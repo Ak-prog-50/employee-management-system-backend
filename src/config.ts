@@ -11,3 +11,5 @@ export const GET_FRONTEND_URL = () => {
 
 export const winston_format = (key: string, msg: string): string =>
   `key => ${key} *msg: ${msg}`;
+
+export const SEED_HR_PERSON_ID = 1;

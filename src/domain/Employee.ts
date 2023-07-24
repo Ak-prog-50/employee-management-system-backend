@@ -12,7 +12,7 @@ class Employee extends User {
       params.address,
       params.dob,
       params.appDate,
-      params.role,
+      params.role, // todo: hardcode role
     );
   }
   requestRegistrationApproval() {}

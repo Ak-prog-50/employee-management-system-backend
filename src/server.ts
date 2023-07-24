@@ -1,14 +1,16 @@
 import express, { NextFunction } from "express";
 import cors from "cors";
-import { GET_FRONTEND_URL } from "./config";
+import { GET_FRONTEND_URL, NODE_ENVS } from "./config";
 import { IRequest } from "./types/vendor/IRequest";
 import { IResponse } from "./types/vendor/IResponse";
 import userRouter from "./routes/userRouter";
 import AppError from "./utils/error-handling/AppErrror";
 import appErrorHandler from "./utils/error-handling/appErrorHandler";
-import { dbConnect } from "./services/database";
+import { dbConnect, seedDB } from "./services/database";
+import dotenv from "dotenv";
 const { PORT } = process.env;
 const app = express();
+dotenv.config();
 
 // Initial setup for server
 app.use(
@@ -40,6 +42,7 @@ app.all("*", (req: IRequest, res: IResponse, next: NextFunction): void => {
 if (require.main === module) {
   (async function () {
     await dbConnect();
+    if (process.env.NODE_ENV === NODE_ENVS.dev) await seedDB();
     app.listen(PORT, () => {
       console.info(`Server is running on port ${PORT}`);
     });

@@ -1,30 +1,20 @@
-import { TRole } from "../types/generalTypes";
-import User from "./User";
+import User, { IUserParams } from "./User";
+
+type THRPersonParams = Omit<IUserParams, "role">;
 
 class HRPerson extends User {
-  constructor(
-    empId: number,
-    name: string,
-    contactNo: number,
-    email: string,
-    age: number,
-    designation: string,
-    address: string,
-    dob: Date,
-    appDate: Date,
-    role: TRole = "hrPerson",
-  ) {
+  constructor(params: THRPersonParams) {
     super(
-      empId,
-      name,
-      contactNo,
-      email,
-      age,
-      designation,
-      address,
-      dob,
-      appDate,
-      role,
+      params.empId,
+      params.name,
+      params.contactNo,
+      params.email,
+      params.age,
+      params.designation,
+      params.address,
+      params.dob,
+      params.appDate,
+      "hrPerson",
     );
   }
   generatePerformanceReport() {}

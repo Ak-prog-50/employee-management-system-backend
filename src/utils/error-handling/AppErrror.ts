@@ -22,12 +22,12 @@ class AppError extends Error {
   }
 
   static internal(
-    publicAddress: string,
+    userId: string,
     message: string,
     name: string = "error",
     data: any = null,
   ) {
-    return new AppError(500, name, message, publicAddress, data);
+    return new AppError(500, name, message, userId, data);
   }
 }
 

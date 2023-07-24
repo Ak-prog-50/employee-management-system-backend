@@ -32,7 +32,7 @@ async function createUser(
   } else {
     // send a request and save it in db
     return {
-      appError: null,
+      appError: AppError.internal("", "Not Implemented"),
       sucessData: null,
     };
   }
