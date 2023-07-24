@@ -1,7 +1,7 @@
 import { Sequelize } from "sequelize-typescript";
 import dotenv from "dotenv";
 import errHandlerAsync from "../utils/error-handling/errHandlerAsync";
-import UserModel from "../data-access/models/userModel";
+import UserModel from "../data-access/models/user.model";
 import { saveUser } from "../data-access/user.db";
 import HRPerson from "../domain/HRPerson";
 import { SEED_HR_PERSON_ID } from "../config";

@@ -3,7 +3,7 @@ import cors from "cors";
 import { GET_FRONTEND_URL, NODE_ENVS } from "./config";
 import { IRequest } from "./types/vendor/IRequest";
 import { IResponse } from "./types/vendor/IResponse";
-import userRouter from "./routes/userRouter";
+import userRouter from "./routes/user.router";
 import AppError from "./utils/error-handling/AppErrror";
 import appErrorHandler from "./utils/error-handling/appErrorHandler";
 import { dbConnect, seedDB } from "./services/database";

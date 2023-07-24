@@ -1,5 +1,5 @@
 import { randomBytes } from "crypto";
-import UserModel from "../data-access/models/userModel";
+import UserModel from "../data-access/models/user.model";
 import { TSaveUser } from "../interactors/user.interactor";
 import { TRole } from "../types/generalTypes";
 import AppError from "../utils/error-handling/AppErrror";

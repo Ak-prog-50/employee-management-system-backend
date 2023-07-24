@@ -2,7 +2,7 @@ import { Router } from "express";
 import {
   createUserController,
   loginUserController,
-} from "../controllers/userController";
+} from "../controllers/user.controller";
 import wrapAsyncExpress from "../utils/error-handling/wrapExpressAsync";
 
 export default function userRouter() {

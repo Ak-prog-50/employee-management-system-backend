@@ -7,7 +7,7 @@ import { IinteractorReturn } from "../types/generalTypes";
 import appErrorHandler from "../utils/error-handling/appErrorHandler";
 import { getUserById, saveUser } from "../data-access/user.db";
 import User from "../domain/User";
-import UserModel from "../data-access/models/userModel";
+import UserModel from "../data-access/models/user.model";
 import Employee from "../domain/Employee";
 import { authenticateUser } from "../services/auth";
 

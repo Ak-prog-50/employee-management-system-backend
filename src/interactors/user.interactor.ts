@@ -1,4 +1,4 @@
-import UserModel from "../data-access/models/userModel";
+import UserModel from "../data-access/models/user.model";
 import User from "../domain/User";
 import { IinteractorReturn } from "../types/generalTypes";
 import AppError from "../utils/error-handling/AppErrror";

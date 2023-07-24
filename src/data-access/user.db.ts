@@ -4,7 +4,7 @@ import Manager from "../domain/Manager";
 import User from "../domain/User";
 import { TGetUserById, TSaveUser } from "../interactors/user.interactor";
 import logger from "../logger";
-import UserModel from "./models/userModel";
+import UserModel from "./models/user.model";
 
 const saveUser: TSaveUser = async function (user: User, password: string) {
   // do a db query save user object.
