@@ -6,6 +6,7 @@ import { saveUser } from "../data-access/user.db";
 import HRPerson from "../domain/HRPerson";
 import { SEED_HR_PERSON_ID } from "../config";
 import { protectPwd } from "../utils/pwdHelpers";
+import RegistrationRequestModel from "../data-access/models/registrationRequest.model";
 
 dotenv.config();
 
@@ -24,14 +25,14 @@ async function dbConnect() {
   if (err) console.error("Unable to connect to the database:", err);
   else {
     console.log("Database connection established!");
-    sequelize.addModels([UserModel]);
+    sequelize.addModels([UserModel, RegistrationRequestModel]);
     await sequelize.sync({ force: true, match: /_development$/ });
   }
 }
 
 async function seedDB() {
   const seedHRPerson = new HRPerson({
-    empId: SEED_HR_PERSON_ID,
+    empId: null, // empId will be auto-incremented
     name: "Jane Smith",
     contactNo: "9876543210",
     email: "jane.smith@example.com",

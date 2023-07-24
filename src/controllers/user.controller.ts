@@ -10,6 +10,7 @@ import User from "../domain/User";
 import UserModel from "../data-access/models/user.model";
 import Employee from "../domain/Employee";
 import { authenticateUser } from "../services/auth";
+import RegistrationRequestModel from "../data-access/models/registrationRequest.model";
 
 /**
  * @type {TExpressAsyncCallback} An Express middleware function that will be passed into 'create-user' route.
@@ -62,7 +63,7 @@ const createUserController: TExpressAsyncCallback = async function (
     return;
   }
   const [result, unHandledErr] =
-    await errHandlerAsync<IinteractorReturn<UserModel>>( // prettier-ignore
+    await errHandlerAsync<IinteractorReturn<UserModel | RegistrationRequestModel>>( // prettier-ignore
       createUser(
         req.user ? (req.user as User) : null,
         registrantDetails,
@@ -73,9 +74,13 @@ const createUserController: TExpressAsyncCallback = async function (
     appErrorHandler(unHandledErr, req, res, next);
     return;
   } else if (result !== null) {
-    const { appError, sucessData: createdUser } = result;
-    if (appError === null && createdUser !== null) {
-      AppResponse.created(res, "User created", createdUser);
+    const { appError, sucessData: savedUser } = result;
+    if (appError === null && savedUser !== null) {
+      AppResponse.created(
+        res,
+        "User created or registration request sent",
+        savedUser,
+      );
       return;
     }
     if (appError instanceof AppError) {

@@ -6,18 +6,24 @@ import {
   CreatedAt,
   UpdatedAt,
   DeletedAt,
+  Default,
 } from "sequelize-typescript";
 import { TRole } from "../../types/generalTypes";
-import { IUserParams } from "../../domain/User";
+
+export enum RegistrationStatus {
+  Pending = "pending",
+  Approved = "approved",
+  Rejected = "rejected",
+}
 
 @Table
-class UserModel extends Model implements IUserParams {
+class RegistrationRequestModel extends Model {
   @Column({
     type: DataType.INTEGER,
     autoIncrement: true,
     primaryKey: true,
   })
-  empId!: number;
+  id!: number;
 
   @Column({
     type: DataType.STRING,
@@ -37,18 +43,6 @@ class UserModel extends Model implements IUserParams {
   })
   email!: string;
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  protectedPassword!: string;
-
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: false,
-  })
-  age!: number;
-
   @Column(DataType.STRING)
   designation!: string;
 
@@ -64,6 +58,13 @@ class UserModel extends Model implements IUserParams {
   @Column(DataType.STRING)
   role!: TRole;
 
+  @Column({
+    type: DataType.ENUM,
+    values: Object.values(RegistrationStatus),
+    defaultValue: RegistrationStatus.Pending,
+  })
+  registrationStatus!: RegistrationStatus;
+
   @CreatedAt
   creationDate!: Date;
 
@@ -74,4 +75,4 @@ class UserModel extends Model implements IUserParams {
   deletionDate!: Date;
 }
 
-export default UserModel;
+export default RegistrationRequestModel;

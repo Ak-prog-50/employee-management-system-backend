@@ -1,4 +1,6 @@
+import RegistrationRequestModel from "../data-access/models/registrationRequest.model";
 import UserModel from "../data-access/models/user.model";
+import Employee from "../domain/Employee";
 import User from "../domain/User";
 import { IinteractorReturn } from "../types/generalTypes";
 import AppError from "../utils/error-handling/AppErrror";
@@ -11,11 +13,14 @@ interface ICreateUserDB {
   getUser: TGetUserById;
 }
 
+/**
+ * used to create new user or request user creation
+ */
 async function createUser(
   loggedInUser: User | null,
   userDetails: User,
   createUserDB: ICreateUserDB,
-): Promise<IinteractorReturn<UserModel>> {
+): Promise<IinteractorReturn<UserModel | RegistrationRequestModel>> {
   if (loggedInUser) {
     const ret = await loggedInUser.registerEmp(
       userDetails,
@@ -26,10 +31,11 @@ async function createUser(
       sucessData: ret instanceof AppError ? null : ret,
     };
   } else {
-    // send a request and save it in db
+    const employee = new Employee(userDetails);
+    const registrationRequest = await employee.requestRegistrationApproval();
     return {
-      appError: AppError.internal("", "Not Implemented"),
-      sucessData: null,
+      appError: null,
+      sucessData: registrationRequest,
     };
   }
 }

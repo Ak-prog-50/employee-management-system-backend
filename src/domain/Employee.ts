@@ -1,3 +1,4 @@
+import { saveRegistrationRequest } from "../data-access/registrationReq.db"; //todo: inject this
 import User, { IUserParams } from "./User";
 
 class Employee extends User {
@@ -15,7 +16,9 @@ class Employee extends User {
       params.role, // todo: hardcode role
     );
   }
-  requestRegistrationApproval() {}
+  async requestRegistrationApproval() {
+    return await saveRegistrationRequest(this);
+  }
   viewPerformanceReport() {}
   viewTargetReport() {}
 }

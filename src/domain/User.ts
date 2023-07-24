@@ -5,6 +5,7 @@ import { TRole } from "../types/generalTypes";
 import AppError from "../utils/error-handling/AppErrror";
 import { protectPwd } from "../utils/pwdHelpers"; //todo: inject from controller
 import { notifyRegistrant } from "../services/emailService"; //todo: inject from controller
+import calculateAgeFromDOB from "../utils/calculateAgeFromBirth";
 // import Employee from "./Employee";
 // import HRPerson from "./HRPerson";
 // import Manager from "./Manager";
@@ -55,6 +56,7 @@ abstract class User {
     if (canRegister) {
       const employee = new Employee({
         ...userDetails,
+        age: calculateAgeFromDOB(userDetails.dob),
         role: "employee",
       });
       const rawPwd = this.generatePassword();
