@@ -32,14 +32,14 @@ async function dbConnect() {
 async function seedDB() {
   const seedHRPerson = new HRPerson({
     empId: SEED_HR_PERSON_ID,
-    name: "John Doe",
-    contactNo: "1234567890",
-    email: "john.doe@example.com",
-    age: 30,
+    name: "Jane Smith",
+    contactNo: "9876543210",
+    email: "jane.smith@example.com",
+    age: 35,
     designation: "HR Manager",
-    address: "123 Main Street, Cityville",
+    address: "456 Park Avenue, Townsville",
     dob: new Date("1993-07-24"),
-    appDate: new Date(),
+    appDate: new Date("2020-10-05"),
   });
   const protectedPwd = await protectPwd("password");
   await saveUser(seedHRPerson, protectedPwd).catch((err) =>

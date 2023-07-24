@@ -12,19 +12,15 @@ interface ICreateUserDB {
 }
 
 async function createUser(
-  empIdOfCaller: number | null,
+  loggedInUser: User | null,
   userDetails: User,
   createUserDB: ICreateUserDB,
 ): Promise<IinteractorReturn<UserModel>> {
-  if (empIdOfCaller) {
-    const user = await createUserDB.getUser(empIdOfCaller);
-    if (user === null) {
-      return {
-        appError: AppError.notFound("User not found"),
-        sucessData: null,
-      };
-    }
-    const ret = await user.registerEmp(userDetails, createUserDB.saveUser);
+  if (loggedInUser) {
+    const ret = await loggedInUser.registerEmp(
+      userDetails,
+      createUserDB.saveUser,
+    );
     return {
       appError: ret instanceof AppError ? ret : null,
       sucessData: ret instanceof AppError ? null : ret,

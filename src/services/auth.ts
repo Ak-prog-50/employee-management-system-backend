@@ -1,11 +1,9 @@
 import passport, { AuthenticateCallback } from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
-import bcrypt from "bcrypt";
 import { TExpressCallback } from "../types/expressTypes";
 import appErrorHandler from "../utils/error-handling/appErrorHandler";
 import { findUserByEmail, getUserById } from "../data-access/user.db";
 import AppResponse from "../utils/AppResponse";
-import logger from "../logger";
 import AppError from "../utils/error-handling/AppErrror";
 import { comparePwd } from "../utils/pwdHelpers";
 
@@ -16,11 +14,9 @@ passport.use(
       usernameField: "email", // Use 'email' as the username field
     },
     async (email, password, done) => {
-      console.log("🚀 ~ file: auth.ts:18 ~ email:", email);
       try {
         // Find the user by email in your data access layer
         const user = await findUserByEmail(email);
-        console.log("🚀 ~ file: auth.ts:22 ~ user:", user);
 
         if (user === null) {
           return done(null, false, { message: "Incorrect email!" });

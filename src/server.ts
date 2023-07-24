@@ -36,7 +36,7 @@ app.use(
     secret: "keyboard cat",
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: true },
+    cookie: { secure: process.env.NODE_ENV === NODE_ENVS.dev ? false : true },
   }),
 );
 

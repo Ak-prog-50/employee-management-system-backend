@@ -4,6 +4,7 @@
         "DB_PASSWORD":"",
         "DB_NAME":"",
         "NODE_ENV":"dev || prod",
-        "PORT":"8000"
+        "PORT":"8000",
+        "MAILTRAP_PWD": ""
     }
 }

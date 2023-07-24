@@ -34,13 +34,8 @@ const createUserController: TExpressAsyncCallback = async function (
   registrantDetails = new Employee({
     ...registrantDetails,
     empId: registrantDetails.empId || null,
-    appDate: new Date(),
     role: null,
   });
-  console.log(
-    "🚀 ~ file: userController.ts:32 ~ return ~ registrantDetails:",
-    registrantDetails,
-  );
 
   if (!(registrantDetails instanceof User)) {
     appErrorHandler(
@@ -57,9 +52,22 @@ const createUserController: TExpressAsyncCallback = async function (
     saveUser: saveUser,
     getUser: getUserById,
   };
+  if (empIdOfCaller && !req.user) {
+    appErrorHandler(
+      AppError.notAllowed("Priviledged Employee has to be logged in!"),
+      req,
+      res,
+      next,
+    );
+    return;
+  }
   const [result, unHandledErr] =
     await errHandlerAsync<IinteractorReturn<UserModel>>( // prettier-ignore
-      createUser(empIdOfCaller, registrantDetails, createUserDB),
+      createUser(
+        req.user ? (req.user as User) : null,
+        registrantDetails,
+        createUserDB,
+      ),
     );
   if (unHandledErr !== null) {
     appErrorHandler(unHandledErr, req, res, next);

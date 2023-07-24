@@ -3,8 +3,8 @@ import UserModel from "../data-access/models/userModel";
 import { TSaveUser } from "../interactors/user.interactor";
 import { TRole } from "../types/generalTypes";
 import AppError from "../utils/error-handling/AppErrror";
-import bcrypt from "bcrypt";
-import { protectPwd } from "../utils/pwdHelpers";
+import { protectPwd } from "../utils/pwdHelpers"; //todo: inject from controller
+import { notifyRegistrant } from "../services/emailService"; //todo: inject from controller
 // import Employee from "./Employee";
 // import HRPerson from "./HRPerson";
 // import Manager from "./Manager";
@@ -32,7 +32,7 @@ abstract class User {
     public designation: string,
     public address: string,
     public dob: Date,
-    public appDate: Date,
+    public appDate: Date, /// appointed date
     public role: TRole | null,
   ) {}
 
@@ -59,7 +59,9 @@ abstract class User {
       });
       const rawPwd = this.generatePassword();
       const protectedPwd = await protectPwd(rawPwd);
-      return await saveUser(employee, protectedPwd);
+      const savedUser = await saveUser(employee, protectedPwd);
+      await notifyRegistrant(employee.email, rawPwd);
+      return savedUser;
     } else {
       return AppError.notAllowed("User doesn't have permission to register!");
     }
