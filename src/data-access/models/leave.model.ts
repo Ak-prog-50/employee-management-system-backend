@@ -28,12 +28,6 @@ class LeaveModel extends Model {
     allowNull: false,
   })
   leaveType!: string;
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  leaveCode!: string;
 }
 
 export default LeaveModel;

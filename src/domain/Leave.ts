@@ -2,16 +2,12 @@ import LeaveModel from "../data-access/models/leave.model";
 import { TCreateLeaveDB } from "../interactors/leave.interactor";
 
 export interface ILeaveParams {
-  //   leaveId: number | null;
+  leaveId: number | null; // will be incremented automatically in db
   empId: number;
   startDate: Date;
   endDate: Date;
   status: LeaveStatus;
   leaveType: string;
-  leaveCode: string;
-  // takenLeaves: string;
-  // balance: number;
-  // entitLeaves: string;
 }
 
 export enum LeaveStatus {
@@ -21,27 +17,19 @@ export enum LeaveStatus {
 }
 
 export class Leave {
-  //   leaveId: number | null;
+  leaveId: number | null;
   empId: number;
   startDate: Date;
   endDate: Date;
   status: LeaveStatus;
   leaveType: string;
-  leaveCode: string;
-  // takenLeaves: string;
-  // balance: number;
-  // entitLeaves: string;
   constructor(params: ILeaveParams) {
-    // this.leaveId = params.leaveId;
+    this.leaveId = params.leaveId;
     this.empId = params.empId;
     this.startDate = params.startDate;
     this.endDate = params.endDate;
     this.status = params.status;
     this.leaveType = params.leaveType;
-    this.leaveCode = params.leaveCode;
-    // this.takenLeaves = params.takenLeaves;
-    // this.balance = params.balance;
-    // this.entitLeaves = params.entitLeaves;
   }
 
   static async requestLeave(

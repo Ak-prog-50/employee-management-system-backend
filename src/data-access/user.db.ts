@@ -8,8 +8,8 @@ import UserModel from "./models/user.model";
 
 const saveUser: TSaveUser = async function (user: User, password: string) {
   // do a db query save user object.
-  const userModel = new UserModel({ ...user, protectedPassword: password });
-  return await userModel.save();
+  const userInstance = new UserModel({ ...user, protectedPassword: password });
+  return await userInstance.save();
 };
 
 const getUserById: TGetUserById = async (empId) => {

@@ -3,16 +3,14 @@ import LeaveModel from "./models/leave.model";
 
 async function saveLeave(leave: Leave): Promise<LeaveModel> {
   try {
-    const savedLeave = await LeaveModel.create({
-      empId: leave.empId,
-      leaveType: leave.leaveType,
-      leaveCode: leave.leaveCode,
-      //   entitLeaves: leave.entitLeaves,
-      //   takenLeaves: leave.takenLeaves,
-      //   balance: leave.balance,
+    // const savedLeave = await LeaveModel.create({
+    //   empId: leave.empId,
+    //   leaveType: leave.leaveType,
+    // });
+    const leaveInstance = new LeaveModel({
+      ...leave,
     });
-
-    return savedLeave;
+    return await leaveInstance.save();
   } catch (error) {
     throw new Error("Error saving leave");
   }
@@ -40,10 +38,6 @@ async function updateLeave(
       {
         empId: leave.empId,
         leaveType: leave.leaveType,
-        leaveCode: leave.leaveCode,
-        // entitLeaves: leave.entitLeaves,
-        // takenLeaves: leave.takenLeaves,
-        // balance: leave.balance,
       },
       {
         where: {
