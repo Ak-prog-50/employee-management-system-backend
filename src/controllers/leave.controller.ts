@@ -1,5 +1,3 @@
-// leave.controller.ts (Controller Layer)
-
 import { Request, Response, NextFunction } from "express";
 import {
   requestLeave,
@@ -11,6 +9,8 @@ import { notifyEmployeeLeaveStatus } from "../services/emailService";
 import AppError from "../utils/error-handling/AppErrror";
 import appErrorHandler from "../utils/error-handling/appErrorHandler";
 import { getLeaveById, saveLeave, updateLeave } from "../data-access/leave.db";
+import { ILeaveParams } from "../domain/Leave";
+import User from "../domain/User";
 
 export const requestLeaveController = async (
   req: Request,
@@ -19,17 +19,28 @@ export const requestLeaveController = async (
 ): Promise<void> => {
   const { leaveObj } = req.body;
   // todo: type check leaveObj
-  const result = await requestLeave(leaveObj, saveLeave);
+  if (req.user) {
+    const result = await requestLeave(
+      req.user as User,
+      leaveObj as ILeaveParams,
+      saveLeave,
+    );
 
-  if (result instanceof AppError) {
-    appErrorHandler(result, req, res, next);
+    if (result instanceof AppError) {
+      appErrorHandler(result, req, res, next);
+      return;
+    }
+
+    AppResponse.success(res, "Leave request submitted", result);
     return;
-  }
-
-  AppResponse.success(res, "Leave request submitted", result);
-  return;
+  } else
+    return appErrorHandler(
+      AppError.notAllowed("User not logged in!"),
+      req,
+      res,
+      next,
+    );
 };
-
 export const approveLeaveController = async (
   req: Request,
   res: Response,

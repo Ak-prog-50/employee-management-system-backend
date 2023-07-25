@@ -22,13 +22,13 @@ const getUserById: TGetUserById = async (empId) => {
   switch (user.role) {
     case "employee":
       return new Employee({
-        ...user,
+        ...user.dataValues,
         age: user.age,
       });
     // case "manager":
     //   return new Manager({...user});
     case "hrPerson":
-      return new HRPerson({ ...user, age: user.age });
+      return new HRPerson({ ...user.dataValues, age: user.age });
     default:
       logger.error("Invalid user role");
       return null;

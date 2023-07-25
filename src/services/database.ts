@@ -7,6 +7,7 @@ import HRPerson from "../domain/HRPerson";
 import { SEED_HR_PERSON_ID } from "../config";
 import { protectPwd } from "../utils/pwdHelpers";
 import RegistrationRequestModel from "../data-access/models/registrationRequest.model";
+import LeaveModel from "../data-access/models/leave.model";
 
 dotenv.config();
 
@@ -25,7 +26,7 @@ async function dbConnect() {
   if (err) console.error("Unable to connect to the database:", err);
   else {
     console.log("Database connection established!");
-    sequelize.addModels([UserModel, RegistrationRequestModel]);
+    sequelize.addModels([UserModel, RegistrationRequestModel, LeaveModel]);
     await sequelize.sync({ force: true, match: /_development$/ });
   }
 }

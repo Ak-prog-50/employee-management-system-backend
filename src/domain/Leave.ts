@@ -1,5 +1,7 @@
+import { updateLeaveBalance } from "../data-access/leave.db";
 import LeaveModel from "../data-access/models/leave.model";
 import { TCreateLeaveDB } from "../interactors/leave.interactor";
+import AppError from "../utils/error-handling/AppErrror";
 
 export interface ILeaveParams {
   leaveId: number | null; // will be incremented automatically in db
@@ -7,7 +9,14 @@ export interface ILeaveParams {
   startDate: Date;
   endDate: Date;
   status: LeaveStatus;
-  leaveType: string;
+  leaveType: LeaveType;
+}
+
+export enum LeaveType {
+  Casual = "casual",
+  Sick = "sick",
+  Annual = "annual",
+  Duty = "duty",
 }
 
 export enum LeaveStatus {
@@ -31,15 +40,28 @@ export class Leave {
     this.status = params.status;
     this.leaveType = params.leaveType;
   }
+  static isAppDateValid(appDate: Date): boolean {
+    // Calculate the difference between appDate and the current date
+    const currentDate = new Date();
+    const threeMonthsAgo = new Date(currentDate.getFullYear(), currentDate.getMonth() - 3, currentDate.getDate());
+  
+    // Check if appDate is at least 3 months before the current date
+    return appDate <= threeMonthsAgo;
+  }
 
   static async requestLeave(
+    loggedInUserId: number,
+    loggedInUserAppDate: Date,
     leaveObj: ILeaveParams,
     saveLeaveRequest: TCreateLeaveDB,
-  ): Promise<LeaveModel> {
-    // Check if the employee is eligible to apply for leave based on their service duration and leave credits
-    // Perform necessary validations
+  ): Promise<LeaveModel | AppError> {
+    if (!this.isAppDateValid(loggedInUserAppDate)) {
+      return AppError.notAllowed("Cannot request leave. Minimum 3 months of service required.");
+    }
 
-    // If eligible, create a new Leave object with status 'Pending'
+    const ret = await updateLeaveBalance(loggedInUserId, leaveObj.leaveType)
+    if (ret instanceof AppError) return ret;
+
     const leave = new Leave({ ...leaveObj, status: LeaveStatus.Pending });
     // Save the leave request to the database or any appropriate data store
     return await saveLeaveRequest(leave);

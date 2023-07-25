@@ -1,8 +1,9 @@
 import LeaveModel from "../data-access/models/leave.model";
 import { ILeaveParams, Leave, LeaveStatus } from "../domain/Leave";
+import User from "../domain/User";
 import AppError from "../utils/error-handling/AppErrror";
 
-export type TCreateLeaveDB = (leave: Leave) => Promise<LeaveModel>;
+export type TCreateLeaveDB = (leave: Leave) => Promise<LeaveModel | AppError>;
 export type TGetLeaveByIdDB = (leaveId: number) => Promise<LeaveModel | null>;
 export type TUpdateLeaveDB = (
   leave: Leave,
@@ -10,11 +11,22 @@ export type TUpdateLeaveDB = (
 ) => Promise<void>;
 
 export async function requestLeave(
+  loggedInUser: User,
   leaveObj: ILeaveParams,
   createLeaveDB: TCreateLeaveDB,
 ): Promise<LeaveModel | AppError> {
   try {
-    const requestedLeave = await Leave.requestLeave(leaveObj, createLeaveDB);
+    const empId = loggedInUser.empId;
+    if (!empId) {
+      return AppError.internal(loggedInUser.email, "Emp Id is null!");
+    }
+    leaveObj.empId = empId;
+    const requestedLeave = await Leave.requestLeave(
+      empId,
+      loggedInUser.appDate,
+      leaveObj,
+      createLeaveDB,
+    );
     return requestedLeave;
   } catch (error) {
     return AppError.internal(
