@@ -74,7 +74,7 @@ const createUserController: TExpressAsyncCallback = async function (
   const [result, unHandledErr] =
     await errHandlerAsync<IinteractorReturn<UserModel | RegistrationRequestModel>>( // prettier-ignore
       createUser(
-        req.user ? (req.user as User) : null,
+        empIdOfCaller ? (req.user as User) : null,
         registrant,
         createUserDB,
       ),
