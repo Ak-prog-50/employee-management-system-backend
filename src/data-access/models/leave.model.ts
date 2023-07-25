@@ -34,24 +34,6 @@ class LeaveModel extends Model {
     allowNull: false,
   })
   leaveCode!: string;
-
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: false,
-  })
-  entitLeaves!: number;
-
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: false,
-  })
-  takenLeaves!: number;
-
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: false,
-  })
-  balance!: number;
 }
 
 export default LeaveModel;
