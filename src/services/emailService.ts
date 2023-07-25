@@ -1,4 +1,5 @@
 import { createTransport } from "nodemailer";
+import { LeaveStatus } from "../domain/Leave";
 
 // Function to send an email to the employee with the temporary password
 export async function notifyRegistrant(
@@ -6,7 +7,6 @@ export async function notifyRegistrant(
   tempPassword: string,
 ): Promise<void> {
   // Setup the email transporter (using a test account for example)
-  console.log("mailtrap", process.env.MAILTRAP_PWD);
   const transporter = createTransport({
     host: "sandbox.smtp.mailtrap.io", // Replace with your SMTP server host
     port: 2525, // Replace with the port number
@@ -34,4 +34,14 @@ export async function notifyRegistrant(
 
   // Send the email
   await transporter.sendMail(mailOptions);
+}
+
+export async function notifyEmployeeLeaveStatus(
+  email: string,
+  status: LeaveStatus,
+): Promise<void> {
+  // Logic to send an email to the employee notifying the leave status
+  // You can use a library like Nodemailer to send the email
+  // Example: Send an email to the employee with the leave status
+  // Include relevant details such as leave start and end dates, and any additional information
 }
