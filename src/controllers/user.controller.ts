@@ -11,15 +11,22 @@ import UserModel from "../data-access/models/user.model";
 import Employee from "../domain/Employee";
 import { authenticateUser } from "../services/auth";
 import RegistrationRequestModel from "../data-access/models/registrationRequest.model";
+import { isUserParams } from "../utils/typecheckers";
 
 /**
  * @type {TExpressAsyncCallback} An Express middleware function that will be passed into 'create-user' route.
  */
+// todo: seperate createUserController to request registration and registration approval.
 const createUserController: TExpressAsyncCallback = async function (
   req,
   res,
   next,
 ) {
+  /**
+   * registrantDetails is not valid => invalid registrant details
+   * empIdOfCaller = null, registrantDetails is validObject=> request for registration by anyone
+   * empIfOfCaller = empId, registrantDetails is validObject => create user by loggedIn priviledged user or revert if loggedInUser is not priviledged.
+   */
   let { empIdOfCaller, registrantDetails } = req.body;
 
   // validating req.body properties
@@ -32,13 +39,13 @@ const createUserController: TExpressAsyncCallback = async function (
     );
     return;
   }
-  registrantDetails = new Employee({
+  registrantDetails = {
     ...registrantDetails,
-    empId: registrantDetails.empId || null,
+    empId: registrantDetails?.empId || null,
     role: null,
-  });
+  };
 
-  if (!(registrantDetails instanceof User)) {
+  if (!isUserParams(registrantDetails)) {
     appErrorHandler(
       AppError.badRequest("Invalid registrant details!"),
       req,
@@ -51,7 +58,7 @@ const createUserController: TExpressAsyncCallback = async function (
   // This object containing related db functions will be injected to interactor.
   const createUserDB = {
     saveUser: saveUser,
-    getUser: getUserById,
+    // getUser: getUserById,
   };
   if (empIdOfCaller && !req.user) {
     appErrorHandler(
@@ -62,11 +69,12 @@ const createUserController: TExpressAsyncCallback = async function (
     );
     return;
   }
+  const registrant = new Employee(registrantDetails);
   const [result, unHandledErr] =
     await errHandlerAsync<IinteractorReturn<UserModel | RegistrationRequestModel>>( // prettier-ignore
       createUser(
         req.user ? (req.user as User) : null,
-        registrantDetails,
+        registrant,
         createUserDB,
       ),
     );

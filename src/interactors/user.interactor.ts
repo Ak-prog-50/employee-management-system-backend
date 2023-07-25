@@ -10,20 +10,22 @@ export type TGetUserById = (empId: number) => Promise<User | null>;
 
 interface ICreateUserDB {
   saveUser: TSaveUser;
-  getUser: TGetUserById;
+  // getUser: TGetUserById;
 }
 
 /**
  * used to create new user or request user creation
  */
+// todo: rename function to registerUser or approveRegistrant
 async function createUser(
   loggedInUser: User | null,
-  userDetails: User,
+  registrant: User,
   createUserDB: ICreateUserDB,
 ): Promise<IinteractorReturn<UserModel | RegistrationRequestModel>> {
+  // loggednInUser has to be priviledged since it returned from getUserById at deserialzieUser function in auth.
   if (loggedInUser) {
     const ret = await loggedInUser.registerEmp(
-      userDetails,
+      registrant,
       createUserDB.saveUser,
     );
     return {
@@ -31,7 +33,8 @@ async function createUser(
       sucessData: ret instanceof AppError ? null : ret,
     };
   } else {
-    const employee = new Employee(userDetails);
+    // todo: move this else block to new interactor 'requestRegistration'
+    const employee = new Employee(registrant);
     const registrationRequest = await employee.requestRegistrationApproval();
     return {
       appError: null,

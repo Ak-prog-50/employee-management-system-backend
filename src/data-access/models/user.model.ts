@@ -10,6 +10,7 @@ import {
 import { TRole } from "../../types/generalTypes";
 import { IUserParams } from "../../domain/User";
 
+// todo: seperate tables for employee, manager and hrPerson
 @Table
 class UserModel extends Model implements IUserParams {
   @Column({

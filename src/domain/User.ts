@@ -6,6 +6,7 @@ import AppError from "../utils/error-handling/AppErrror";
 import { protectPwd } from "../utils/pwdHelpers"; //todo: inject from controller
 import { notifyRegistrant } from "../services/emailService"; //todo: inject from controller
 import calculateAgeFromDOB from "../utils/calculateAgeFromBirth";
+import { findAndApprove } from "../data-access/registrationReq.db"; // todo: inject from controller
 // import Employee from "./Employee";
 // import HRPerson from "./HRPerson";
 // import Manager from "./Manager";
@@ -61,9 +62,14 @@ abstract class User {
       });
       const rawPwd = this.generatePassword();
       const protectedPwd = await protectPwd(rawPwd);
-      const savedUser = await saveUser(employee, protectedPwd);
-      await notifyRegistrant(employee.email, rawPwd);
-      return savedUser;
+      const pendingRegistraion = await findAndApprove(employee.email);
+      if (pendingRegistraion === true) {
+        const savedUser = await saveUser(employee, protectedPwd);
+        await notifyRegistrant(employee.email, rawPwd);
+        return savedUser;
+      } else if (pendingRegistraion === false) {
+        return AppError.notFound("No pending registration found!");
+      } else return pendingRegistraion;
     } else {
       return AppError.notAllowed("User doesn't have permission to register!");
     }
