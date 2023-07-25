@@ -8,11 +8,10 @@ import {
   DeletedAt,
 } from "sequelize-typescript";
 import { TRole } from "../../types/generalTypes";
-import { IUserParams } from "../../domain/User";
 
 // todo: seperate tables for employee, manager and hrPerson
 @Table
-class UserModel extends Model implements IUserParams {
+class UserModel extends Model {
   @Column({
     type: DataType.INTEGER,
     autoIncrement: true,
@@ -44,12 +43,6 @@ class UserModel extends Model implements IUserParams {
   })
   protectedPassword!: string;
 
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: false,
-  })
-  age!: number;
-
   @Column(DataType.STRING)
   designation!: string;
 
@@ -73,6 +66,22 @@ class UserModel extends Model implements IUserParams {
 
   @DeletedAt
   deletionDate!: Date;
+
+  get age(): number {
+    const currentDate = new Date();
+    const birthDate = new Date(this.dob);
+    let age = currentDate.getFullYear() - birthDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+    const birthMonth = birthDate.getMonth();
+    if (
+      currentMonth < birthMonth ||
+      (currentMonth === birthMonth &&
+        currentDate.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
+    return age;
+  }
 }
 
 export default UserModel;

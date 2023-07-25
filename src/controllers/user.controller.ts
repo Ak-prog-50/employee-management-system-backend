@@ -42,6 +42,7 @@ const createUserController: TExpressAsyncCallback = async function (
   registrantDetails = {
     ...registrantDetails,
     empId: registrantDetails?.empId || null,
+    age: 0, // age doesn't matter. will be derived.
     role: null,
   };
 
