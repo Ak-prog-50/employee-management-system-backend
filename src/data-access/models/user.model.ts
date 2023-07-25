@@ -6,10 +6,12 @@ import {
   CreatedAt,
   UpdatedAt,
   DeletedAt,
+  Default,
 } from "sequelize-typescript";
 import { TRole } from "../../types/generalTypes";
 
 const ENTITLED_LEAVES = 30;
+
 // todo: seperate tables for employee, manager and hrPerson
 @Table
 class UserModel extends Model {
@@ -65,35 +67,40 @@ class UserModel extends Model {
   })
   entitLeaves: number = ENTITLED_LEAVES;
 
+  @Default(0)
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
-  takenLeaves: number = 0;
+  takenLeaves!: number;
 
+  @Default(7)
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
-  casualLeavesBalance: number = 7;
+  casualLeavesBalance!: number;
 
+  @Default(7)
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
-  sickLeavesBalance: number = 7;
+  sickLeavesBalance!: number;
 
+  @Default(14)
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
-  annualLeavesBalance: number = 14;
+  annualLeavesBalance!: number;
 
+  @Default(2)
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
-  dutyLeavesBalance: number = 2;
+  dutyLeavesBalance!: number;
 
   @CreatedAt
   creationDate!: Date;

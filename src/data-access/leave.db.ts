@@ -109,7 +109,7 @@ async function updateLeaveBalance(
 
     // Save the updated user model to the database and reload the instance
     // await user.save();
-    console.log('saved', user.dataValues)
+    // console.log("saved", user.dataValues);
     // await user.reload();
 
     return null;
@@ -120,7 +120,5 @@ async function updateLeaveBalance(
     );
   }
 }
-
-
 
 export { saveLeave, getLeaveById, updateLeave, updateLeaveBalance };

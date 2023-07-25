@@ -43,8 +43,12 @@ export class Leave {
   static isAppDateValid(appDate: Date): boolean {
     // Calculate the difference between appDate and the current date
     const currentDate = new Date();
-    const threeMonthsAgo = new Date(currentDate.getFullYear(), currentDate.getMonth() - 3, currentDate.getDate());
-  
+    const threeMonthsAgo = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() - 3,
+      currentDate.getDate(),
+    );
+
     // Check if appDate is at least 3 months before the current date
     return appDate <= threeMonthsAgo;
   }
@@ -56,10 +60,12 @@ export class Leave {
     saveLeaveRequest: TCreateLeaveDB,
   ): Promise<LeaveModel | AppError> {
     if (!this.isAppDateValid(loggedInUserAppDate)) {
-      return AppError.notAllowed("Cannot request leave. Minimum 3 months of service required.");
+      return AppError.notAllowed(
+        "Cannot request leave. Minimum 3 months of service required.",
+      );
     }
 
-    const ret = await updateLeaveBalance(loggedInUserId, leaveObj.leaveType)
+    const ret = await updateLeaveBalance(loggedInUserId, leaveObj.leaveType);
     if (ret instanceof AppError) return ret;
 
     const leave = new Leave({ ...leaveObj, status: LeaveStatus.Pending });
