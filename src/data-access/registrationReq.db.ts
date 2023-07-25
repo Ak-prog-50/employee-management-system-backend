@@ -14,6 +14,17 @@ const saveRegistrationRequest = async function (user: User) {
   return await userModel.save();
 };
 
+const fetchAllRegistrationRequests = async function (): Promise<
+  RegistrationRequestModel[] | AppError
+> {
+  try {
+    const registrationRequests = await RegistrationRequestModel.findAll();
+    return registrationRequests;
+  } catch (error) {
+    return AppError.internal("", "Error getting registration requests");
+  }
+};
+
 /**
  * @returns false if no pending registration request is found, true if succesful operation or AppError
  */
@@ -54,4 +65,8 @@ const findAndApprove = async function (
   }
 };
 
-export { saveRegistrationRequest, findAndApprove };
+export {
+  saveRegistrationRequest,
+  findAndApprove,
+  fetchAllRegistrationRequests,
+};

@@ -6,6 +6,7 @@ import AppError from "../utils/error-handling/AppErrror";
 import { protectPwd } from "../utils/pwdHelpers"; //todo: inject from controller
 import { notifyRegistrant } from "../services/emailService"; //todo: inject from controller
 import { findAndApprove } from "../data-access/registrationReq.db"; // todo: inject from controller
+import { TfetchRegistrationRequestsList } from "../interactors/registrationReq.interactor";
 // import Employee from "./Employee";
 // import HRPerson from "./HRPerson";
 // import Manager from "./Manager";
@@ -72,6 +73,19 @@ abstract class User {
     } else {
       return AppError.notAllowed("User doesn't have permission to register!");
     }
+  }
+
+  async viewRegistrationRequests(
+    fetchRegistrationRequestsList: TfetchRegistrationRequestsList,
+  ) {
+    const HRPerson = (await import("./HRPerson")).default; // WET
+    const Manager = (await import("./Manager")).default;
+    const canView = this instanceof HRPerson || this instanceof Manager;
+
+    if (canView) {
+      const allRequests = await fetchRegistrationRequestsList();
+      return allRequests;
+    } else return AppError.notAllowed("User doesn't have permission to view!");
   }
   updateEmp() {}
   deleteEmp() {}

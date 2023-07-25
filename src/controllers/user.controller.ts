@@ -71,6 +71,7 @@ const createUserController: TExpressAsyncCallback = async function (
     return;
   }
   const registrant = new Employee(registrantDetails);
+  // todo: remove errHandlerAsync. all unhandled errors will get caught at wrapAsyncExpress.
   const [result, unHandledErr] =
     await errHandlerAsync<IinteractorReturn<UserModel | RegistrationRequestModel>>( // prettier-ignore
       createUser(
@@ -91,8 +92,7 @@ const createUserController: TExpressAsyncCallback = async function (
         savedUser,
       );
       return;
-    }
-    if (appError instanceof AppError) {
+    } else if (appError instanceof AppError) {
       appErrorHandler(appError, req, res, next);
       return;
     }
