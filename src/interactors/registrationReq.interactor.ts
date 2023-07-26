@@ -11,6 +11,7 @@ async function viewAllRegistrationRequests(
   loggedInUser: User,
   fetchRegistrationRequestsList: TfetchRegistrationRequestsList,
 ): Promise<IinteractorReturn<RegistrationRequestModel[]>> {
+  // todo: add pagination
   const ret = await loggedInUser.viewRegistrationRequests(
     fetchRegistrationRequestsList,
   );

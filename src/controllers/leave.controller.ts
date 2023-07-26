@@ -3,6 +3,7 @@ import {
   requestLeave,
   approveLeave,
   rejectLeave,
+  viewAllLeaves,
 } from "../interactors/leave.interactor";
 import AppResponse from "../utils/AppResponse";
 import { notifyEmployeeLeaveStatus } from "../services/emailService";
@@ -11,6 +12,19 @@ import appErrorHandler from "../utils/error-handling/appErrorHandler";
 import { getLeaveById, saveLeave, updateLeave } from "../data-access/leave.db";
 import { ILeaveParams } from "../domain/Leave";
 import User from "../domain/User";
+import { TExpressAsyncCallback } from "../types/expressTypes";
+
+export const viewAllLeavesController: TExpressAsyncCallback = async (
+  req,
+  res,
+  next,
+) => {
+  const ret = await viewAllLeaves(req.user ? (req.user as User) : undefined);
+  if (ret instanceof AppError) {
+    appErrorHandler(ret, req, res, next);
+    return;
+  } else return AppResponse.success(res, ret.msg, ret.data);
+};
 
 export const requestLeaveController = async (
   req: Request,

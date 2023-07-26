@@ -1,5 +1,6 @@
 import LeaveModel from "../data-access/models/leave.model";
 import { ILeaveParams, Leave, LeaveStatus } from "../domain/Leave";
+import Manager from "../domain/Manager";
 import User from "../domain/User";
 import AppError from "../utils/error-handling/AppErrror";
 
@@ -9,6 +10,35 @@ export type TUpdateLeaveDB = (
   leave: Leave,
   leaveIdToUpdate: number,
 ) => Promise<void | AppError>;
+
+// prettier-ignore
+export async function viewAllLeaves(loggedInUser: User | undefined): Promise<AppError | {
+  msg: string;
+  data: LeaveModel[];
+}> {
+  // todo: add pagination
+  try {
+    if (loggedInUser instanceof User) {
+      // todo: move this part to domain layer and extract findAll to a data layer function.
+      const canViewAll = loggedInUser instanceof Manager;
+      const leaves = canViewAll
+        ? await LeaveModel.findAll()
+        : await LeaveModel.findAll({
+            where: {
+              empId: loggedInUser.empId,
+            },
+          });
+      return {
+        msg: canViewAll
+          ? "All Employees' leaves are fetched!"
+          : "Your Leaves are fetched.",
+        data: leaves,
+      };
+    } else return AppError.notAllowed("", "User has to be logged In!");
+  } catch (error) {
+    return AppError.internal("", "Error viewing all leaves");
+  }
+}
 
 export async function requestLeave(
   loggedInUser: User,
