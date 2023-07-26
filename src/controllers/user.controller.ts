@@ -12,6 +12,9 @@ import Employee from "../domain/Employee";
 import { authenticateUser } from "../services/auth";
 import RegistrationRequestModel from "../data-access/models/registrationRequest.model";
 import { isUserParams } from "../utils/typecheckers";
+import { IResponse } from "../types/vendor/IResponse";
+import { INext } from "../types/vendor/INext";
+import logger from "../logger";
 
 /**
  * @type {TExpressAsyncCallback} An Express middleware function that will be passed into 'create-user' route.
@@ -113,4 +116,33 @@ const loginUserController: TExpressAsyncCallback = async function (
   authenticateUser(req, res, next);
 };
 
-export { createUserController, loginUserController };
+const logoutUserController = async (
+  req: any,
+  res: IResponse,
+  next: INext,
+): Promise<void> => {
+  try {
+    if (!req.logout) {
+      appErrorHandler(
+        AppError.internal("", "req.logout is not defined!"),
+        req,
+        res,
+        next,
+      );
+      return;
+    }
+    req.logout();
+    AppResponse.success(res, "Logged out successfully");
+  } catch (error) {
+    logger.error("error at logout: ", error);
+    appErrorHandler(
+      AppError.internal("", "Unhandled error at logout!"),
+      req,
+      res,
+      next,
+    );
+    return;
+  }
+};
+
+export { createUserController, loginUserController, logoutUserController };
