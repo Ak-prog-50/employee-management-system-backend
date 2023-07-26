@@ -8,7 +8,9 @@
     "start-dev:run": "nodemon build/server.js",
     "start-dev": "concurrently yarn:start-dev:*",
     "make-pretty": "prettier --write src/**/*.{ts,json,md}",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "build": "tsc",
+    "prod-run": "node build/server.js"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
