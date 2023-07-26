@@ -75,9 +75,8 @@ export class Leave {
     const leave = new Leave({ ...leaveObj, status: LeaveStatus.Pending });
     // Save the leave request to the database or any appropriate data store
     return await saveLeaveRequest(leave);
-  }
-
-  async deleteLeave() {}
+    // todo: notify Manager ( save notifications to data store and display in ui. maybe send email of all requested leaves after every 24Hrs? )
+c  }
 
   async approveLeave(
     actionPerformerRole: TRole,
@@ -91,6 +90,7 @@ export class Leave {
     // todo: Manager can request and approve leaves by himself.
     this.status = LeaveStatus.Approved;
     const ret = await updateLeaveRequest(this, leaveIdToApprove);
+    // todo: notify employee
     return ret;
   }
 
@@ -106,12 +106,13 @@ export class Leave {
     // todo: Manager can request and approve leaves by himself.
     this.status = LeaveStatus.Rejected;
     const ret = await updateLeaveRequest(this, leaveIdToApprove);
+    // todo: notify employee
     return ret;
     // Save the updated leave status to the database or any appropriate data store
   }
 
   async editLeave() {}
-
+  async deleteLeave() {}
   async getDaysLeft(): Promise<number> {
     return 0;
   }

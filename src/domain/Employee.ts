@@ -17,7 +17,10 @@ class Employee extends User {
     );
   }
   async requestRegistrationApproval() {
+    // todo: add logic to prevent duplicate registration
     return await saveRegistrationRequest(this);
+    // todo: notify HRPerson or/and Manager. ( save notifications to data store and display in ui. maybe send email of all registration reqs after every 24Hrs? )
+    // send a push notification to ui as well
   }
   viewPerformanceReport() {}
   viewTargetReport() {}
