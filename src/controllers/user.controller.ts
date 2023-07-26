@@ -121,28 +121,29 @@ const logoutUserController = async (
   res: IResponse,
   next: INext,
 ): Promise<void> => {
-  try {
-    if (!req.logout) {
-      appErrorHandler(
-        AppError.internal("", "req.logout is not defined!"),
-        req,
-        res,
-        next,
-      );
-      return;
-    }
-    req.logout();
-    AppResponse.success(res, "Logged out successfully");
-  } catch (error) {
-    logger.error("error at logout: ", error);
+  if (!req.logout) {
     appErrorHandler(
-      AppError.internal("", "Unhandled error at logout!"),
+      AppError.internal("", "req.logout is not defined!"),
       req,
       res,
       next,
     );
     return;
   }
+  req.logout(function (err: any) {
+    if (err) {
+      logger.error("error at logout: ", err);
+      appErrorHandler(
+        AppError.internal("", "Unhandled error at logout!"),
+        req,
+        res,
+        next,
+      );
+      return;
+    }
+    AppResponse.success(res, "Logged out successfully");
+    return;
+  });
 };
 
 export { createUserController, loginUserController, logoutUserController };
