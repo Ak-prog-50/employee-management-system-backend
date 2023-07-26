@@ -35,7 +35,7 @@ export class Leave {
   startDate: Date;
   endDate: Date;
   status: LeaveStatus;
-  leaveType: string;
+  leaveType: LeaveType;
   constructor(params: ILeaveParams) {
     this.leaveId = params.leaveId;
     this.empId = params.empId;

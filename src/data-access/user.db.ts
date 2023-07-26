@@ -25,8 +25,8 @@ const getUserById: TGetUserById = async (empId) => {
         ...user.dataValues,
         age: user.age,
       });
-    // case "manager":
-    //   return new Manager({...user});
+    case "manager":
+      return new Manager({ ...user.dataValues, age: user.age });
     case "hrPerson":
       return new HRPerson({ ...user.dataValues, age: user.age });
     default:

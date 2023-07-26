@@ -1,30 +1,20 @@
-import { TRole } from "../types/generalTypes";
-import User from "./User";
+import User, { IUserParams } from "./User";
+
+type TManagerParams = Omit<IUserParams, "role">;
 
 class Manager extends User {
-  constructor(
-    empId: number,
-    name: string,
-    contactNo: string,
-    email: string,
-    age: number,
-    designation: string,
-    address: string,
-    dob: Date,
-    appDate: Date,
-    role: TRole = "manager",
-  ) {
+  constructor(params: TManagerParams) {
     super(
-      empId,
-      name,
-      contactNo,
-      email,
-      age,
-      designation,
-      address,
-      dob,
-      appDate,
-      role,
+      params.empId,
+      params.name,
+      params.contactNo,
+      params.email,
+      params.age,
+      params.designation,
+      params.address,
+      params.dob,
+      params.appDate,
+      "manager",
     );
   }
   generateTargetReports() {}
