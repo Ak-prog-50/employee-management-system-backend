@@ -76,7 +76,7 @@ export class Leave {
     // Save the leave request to the database or any appropriate data store
     return await saveLeaveRequest(leave);
     // todo: notify Manager ( save notifications to data store and display in ui. maybe send email of all requested leaves after every 24Hrs? )
-c  }
+  }
 
   async approveLeave(
     actionPerformerRole: TRole,
