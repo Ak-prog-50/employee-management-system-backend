@@ -35,7 +35,7 @@ export class Leave {
   startDate: Date;
   endDate: Date;
   status: LeaveStatus;
-  leaveType: string;
+  leaveType: LeaveType;
   constructor(params: ILeaveParams) {
     this.leaveId = params.leaveId;
     this.empId = params.empId;
@@ -87,6 +87,8 @@ export class Leave {
     if (actionPerformerRole !== "manager")
       return AppError.notAllowed("User not allowed to approve leaves!");
     // actionPerformer manually reviews leave requests on client side
+    // todo: actionPerformer can call this more than once. Return a message if already approved at the interactor layer.
+    // todo: Manager can request and approve leaves by himself.
     this.status = LeaveStatus.Approved;
     const ret = await updateLeaveRequest(this, leaveIdToApprove);
     return ret;
@@ -100,6 +102,8 @@ export class Leave {
     if (actionPerformerRole !== "manager")
       return AppError.notAllowed("User not allowed to reject leaves!");
     // actionPerformer manually reviews leave requests on client side
+    // todo: actionPerformer can call this more than once. Return a message if already approved at the interactor layer.
+    // todo: Manager can request and approve leaves by himself.
     this.status = LeaveStatus.Rejected;
     const ret = await updateLeaveRequest(this, leaveIdToApprove);
     return ret;

@@ -6,6 +6,7 @@ import {
   DataType,
 } from "sequelize-typescript";
 import UserModel from "./user.model";
+import { LeaveStatus, LeaveType } from "../../domain/Leave";
 
 @Table
 class LeaveModel extends Model {
@@ -24,10 +25,18 @@ class LeaveModel extends Model {
   empId!: number;
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.ENUM,
+    values: Object.values(LeaveType),
     allowNull: false,
   })
-  leaveType!: string;
+  leaveType!: LeaveType;
+
+  @Column({
+    type: DataType.ENUM,
+    values: Object.values(LeaveStatus),
+    allowNull: false,
+  })
+  status!: LeaveStatus;
 
   @Column({
     type: DataType.DATE,
