@@ -33,7 +33,9 @@ export const requestLeaveController = async (
 
     AppResponse.success(res, "Leave request submitted", result);
     return;
-  } else
+  }
+  // todo: pass req.user | null or to interactor and handle not logged in error at interactor.
+  else
     return appErrorHandler(
       AppError.notAllowed("User not logged in!"),
       req,
@@ -41,13 +43,20 @@ export const requestLeaveController = async (
       next,
     );
 };
+
 export const approveLeaveController = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
-  const leaveId = parseInt(req.params.leaveId, 10);
-  const result = await approveLeave(leaveId, getLeaveById, updateLeave);
+  const leaveId: number = req.body.leaveId;
+  // todo: validate leaveId in req.body
+  const result = await approveLeave(
+    req.user ? (req.user as User) : undefined,
+    leaveId,
+    getLeaveById,
+    updateLeave,
+  );
 
   if (result instanceof AppError) {
     appErrorHandler(result, req, res, next);
@@ -63,8 +72,14 @@ export const rejectLeaveController = async (
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
-  const leaveId = parseInt(req.params.leaveId, 10);
-  const result = await rejectLeave(leaveId, getLeaveById, updateLeave);
+  const leaveId: number = req.body.leaveId;
+  // todo: validate leaveId in req.body
+  const result = await rejectLeave(
+    req.user ? (req.user as User) : undefined,
+    leaveId,
+    getLeaveById,
+    updateLeave,
+  );
 
   if (result instanceof AppError) {
     appErrorHandler(result, req, res, next);

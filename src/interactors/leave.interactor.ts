@@ -8,7 +8,7 @@ export type TGetLeaveByIdDB = (leaveId: number) => Promise<LeaveModel | null>;
 export type TUpdateLeaveDB = (
   leave: Leave,
   leaveIdToUpdate: number,
-) => Promise<void>;
+) => Promise<void | AppError>;
 
 export async function requestLeave(
   loggedInUser: User,
@@ -37,40 +37,66 @@ export async function requestLeave(
 }
 
 export async function approveLeave(
+  loggedInUser: User | undefined,
   leaveId: number,
   getLeaveById: TGetLeaveByIdDB,
   updateLeave: TUpdateLeaveDB,
 ): Promise<void | AppError> {
   try {
-    // Find the leave by leaveId in the database
-    const leave = await getLeaveById(leaveId);
-    if (!leave) {
-      return AppError.notFound("Leave not found");
-    }
+    if (loggedInUser instanceof User) {
+      // Find the leave by leaveId in the database
+      const leaveInstanceDB = await getLeaveById(leaveId);
+      if (!leaveInstanceDB) {
+        return AppError.notFound("Leave not found");
+      }
 
-    // Perform necessary validations and logic for approving the leave
-    leave.approveLeave();
-    await updateLeave(leave, leaveId);
+      const leave = new Leave({ ...leaveInstanceDB.dataValues });
+      if (!loggedInUser.role)
+        // this has to be always present since loggedInUser returned from findUserByID at auth
+        return AppError.internal(
+          loggedInUser.email,
+          "Logged In user Role not found!",
+        );
+      const ret = await leave.approveLeave(
+        loggedInUser.role,
+        leaveId,
+        updateLeave,
+      );
+      return ret;
+    } else return AppError.notAllowed("", "User has to be logged In!");
   } catch (error) {
     return AppError.internal("", "Error approving leave");
   }
 }
 
 export async function rejectLeave(
+  loggedInUser: User | undefined,
   leaveId: number,
   getLeaveById: TGetLeaveByIdDB,
   updateLeave: TUpdateLeaveDB,
 ): Promise<void | AppError> {
   try {
-    // Find the leave by leaveId in the database
-    const leave = await getLeaveById(leaveId);
-    if (!leave) {
-      return AppError.notFound("Leave not found");
-    }
+    if (loggedInUser instanceof User) {
+      // Find the leave by leaveId in the database
+      const leaveInstanceDB = await getLeaveById(leaveId);
+      if (!leaveInstanceDB) {
+        return AppError.notFound("Leave not found");
+      }
 
-    // Perform necessary validations and logic for rejecting the leave
-    leave.rejectLeave();
-    await updateLeave(leave, leaveId);
+      const leave = new Leave({ ...leaveInstanceDB.dataValues });
+      if (!loggedInUser.role)
+        // this has to be always present since loggedInUser returned from findUserByID at auth
+        return AppError.internal(
+          loggedInUser.email,
+          "Logged In user Role not found!",
+        );
+      const ret = await leave.rejectLeave(
+        loggedInUser.role,
+        leaveId,
+        updateLeave,
+      );
+      return ret;
+    } else return AppError.notAllowed("", "User has to be logged In!");
   } catch (error) {
     return AppError.internal("", "Error rejecting leave");
   }

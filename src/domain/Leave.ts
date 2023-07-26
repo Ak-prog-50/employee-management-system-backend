@@ -1,6 +1,10 @@
 import { updateLeaveBalance } from "../data-access/leave.db";
 import LeaveModel from "../data-access/models/leave.model";
-import { TCreateLeaveDB } from "../interactors/leave.interactor";
+import {
+  TCreateLeaveDB,
+  TUpdateLeaveDB,
+} from "../interactors/leave.interactor";
+import { TRole } from "../types/generalTypes";
 import AppError from "../utils/error-handling/AppErrror";
 
 export interface ILeaveParams {
@@ -40,7 +44,7 @@ export class Leave {
     this.status = params.status;
     this.leaveType = params.leaveType;
   }
-  static isAppDateValid(appDate: Date): boolean {
+  private static isAppDateValid(appDate: Date): boolean {
     // Calculate the difference between appDate and the current date
     const currentDate = new Date();
     const threeMonthsAgo = new Date(
@@ -54,18 +58,18 @@ export class Leave {
   }
 
   static async requestLeave(
-    loggedInUserId: number,
-    loggedInUserAppDate: Date,
+    userId: number,
+    userAppDate: Date,
     leaveObj: ILeaveParams,
     saveLeaveRequest: TCreateLeaveDB,
   ): Promise<LeaveModel | AppError> {
-    if (!this.isAppDateValid(loggedInUserAppDate)) {
+    if (!this.isAppDateValid(userAppDate)) {
       return AppError.notAllowed(
         "Cannot request leave. Minimum 3 months of service required.",
       );
     }
 
-    const ret = await updateLeaveBalance(loggedInUserId, leaveObj.leaveType);
+    const ret = await updateLeaveBalance(userId, leaveObj.leaveType);
     if (ret instanceof AppError) return ret;
 
     const leave = new Leave({ ...leaveObj, status: LeaveStatus.Pending });
@@ -75,15 +79,30 @@ export class Leave {
 
   async deleteLeave() {}
 
-  async approveLeave(): Promise<void> {
-    // Perform necessary validations and logic for approving the leave
+  async approveLeave(
+    actionPerformerRole: TRole,
+    leaveIdToApprove: number,
+    updateLeaveRequest: TUpdateLeaveDB,
+  ): Promise<void | AppError> {
+    if (actionPerformerRole !== "manager")
+      return AppError.notAllowed("User not allowed to approve leaves!");
+    // actionPerformer manually reviews leave requests on client side
     this.status = LeaveStatus.Approved;
-    // Save the updated leave status to the database or any appropriate data store
+    const ret = await updateLeaveRequest(this, leaveIdToApprove);
+    return ret;
   }
 
-  async rejectLeave(): Promise<void> {
-    // Perform necessary validations and logic for rejecting the leave
+  async rejectLeave(
+    actionPerformerRole: TRole,
+    leaveIdToApprove: number,
+    updateLeaveRequest: TUpdateLeaveDB,
+  ): Promise<void | AppError> {
+    if (actionPerformerRole !== "manager")
+      return AppError.notAllowed("User not allowed to reject leaves!");
+    // actionPerformer manually reviews leave requests on client side
     this.status = LeaveStatus.Rejected;
+    const ret = await updateLeaveRequest(this, leaveIdToApprove);
+    return ret;
     // Save the updated leave status to the database or any appropriate data store
   }
 

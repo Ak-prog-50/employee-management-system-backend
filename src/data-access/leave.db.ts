@@ -1,4 +1,5 @@
 import { Leave, LeaveType } from "../domain/Leave";
+import { TUpdateLeaveDB } from "../interactors/leave.interactor";
 import AppError from "../utils/error-handling/AppErrror";
 import LeaveModel from "./models/leave.model";
 import UserModel from "./models/user.model";
@@ -16,7 +17,7 @@ async function saveLeave(leave: Leave): Promise<LeaveModel | AppError> {
   } catch (error) {
     return AppError.internal(
       leave.empId.toString(),
-      "Error saving leave object",
+      "Error saving leave object!",
     );
   }
 }
@@ -30,14 +31,15 @@ async function getLeaveById(leaveId: number): Promise<LeaveModel | null> {
 
     return new LeaveModel({ ...leave });
   } catch (error) {
-    throw new Error("Error retrieving leave");
+    // todo: return <LeaveModel | AppError>
+    throw new Error("Error retrieving leave!");
   }
 }
 
-async function updateLeave(
+const updateLeave: TUpdateLeaveDB = async function (
   leave: Leave,
   leaveIdToUpdate: number,
-): Promise<void> {
+): Promise<void | AppError> {
   try {
     await LeaveModel.update(
       {
@@ -51,9 +53,12 @@ async function updateLeave(
       },
     );
   } catch (error) {
-    throw new Error("Error updating leave");
+    return AppError.internal(
+      leave.empId.toString(),
+      "Error updating leave object!",
+    );
   }
-}
+};
 
 /**
  * checks if leaves available in the relavant type.

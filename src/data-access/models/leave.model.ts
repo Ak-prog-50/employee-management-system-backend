@@ -28,6 +28,18 @@ class LeaveModel extends Model {
     allowNull: false,
   })
   leaveType!: string;
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: false,
+  })
+  startDate!: Date;
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: false,
+  })
+  endDate!: Date;
 }
 
 export default LeaveModel;

@@ -3,6 +3,7 @@ import AppError from "../utils/error-handling/AppErrror";
 type TRequestProperty = string | undefined;
 type TRole = "employee" | "manager" | "hrPerson";
 
+// todo: maybe this not needed in user.interactor
 interface IinteractorReturn<T = unknown> {
   appError: AppError | null;
   sucessData: T | null;
