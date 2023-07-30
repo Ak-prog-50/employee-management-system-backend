@@ -1,5 +1,4 @@
 import { Router } from "express";
-import TimesheetInteractor from "../interactors/timesheet.interactor";
 import wrapAsyncExpress from "../utils/error-handling/wrapExpressAsync";
 import TimesheetController from "../controllers/timesheet.controller";
 

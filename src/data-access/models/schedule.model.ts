@@ -5,8 +5,15 @@ import {
   Model,
   ForeignKey,
   DataType,
+  Default,
 } from "sequelize-typescript";
 import UserModel from "./user.model";
+
+export enum ScheduleStatus {
+  Pending = "pending",
+  Approved = "approved",
+  Rejected = "rejected",
+}
 
 @Table({ timestamps: true })
 class ScheduleModel extends Model<ScheduleModel> {
@@ -28,6 +35,14 @@ class ScheduleModel extends Model<ScheduleModel> {
 
   @Column(DataType.STRING)
   assignedCustomers?: string;
+
+  @Default(ScheduleStatus.Pending)
+  @Column({
+    type: DataType.ENUM,
+    values: Object.values(ScheduleStatus),
+    allowNull: false,
+  })
+  status!: ScheduleStatus;
 }
 
 export default ScheduleModel;

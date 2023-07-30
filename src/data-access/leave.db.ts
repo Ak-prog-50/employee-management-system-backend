@@ -36,6 +36,17 @@ async function getLeaveById(leaveId: number): Promise<LeaveModel | null> {
   }
 }
 
+async function getLeavesByEmpId(empId: number) {
+  try {
+    const leaves = await LeaveModel.findAll({ where: { empId } });
+    return leaves;
+  } catch (error) {
+    console.error("Error fetching leaves by empId", error);
+    // todo: handle error.
+    throw new Error("Failed to fetch leaves by empId");
+  }
+}
+
 const updateLeave: TUpdateLeaveDB = async function (
   leave: Leave,
   leaveIdToUpdate: number,
@@ -129,4 +140,10 @@ async function updateLeaveBalance(
   }
 }
 
-export { saveLeave, getLeaveById, updateLeave, updateLeaveBalance };
+export {
+  saveLeave,
+  getLeaveById,
+  updateLeave,
+  updateLeaveBalance,
+  getLeavesByEmpId,
+};

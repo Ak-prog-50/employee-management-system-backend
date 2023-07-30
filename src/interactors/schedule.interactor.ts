@@ -1,15 +1,19 @@
 // interactors/schedule.interactor.ts
+import LeaveModel from "../data-access/models/leave.model";
 import ScheduleDB from "../data-access/models/schedule.db";
 import ScheduleModel from "../data-access/models/schedule.model";
+import { LeaveStatus } from "../domain/Leave";
 
 // todo: create domain layer for if there's core business logic
 // todo: implement notification sending
 
 class ScheduleInteractor {
   private scheduleDB: ScheduleDB;
+  private getLeavesByEmpId: any;
 
-  constructor(scheduleDB: ScheduleDB) {
+  constructor(scheduleDB: ScheduleDB, getLeavesByEmpId: any) {
     this.scheduleDB = scheduleDB;
+    this.getLeavesByEmpId = getLeavesByEmpId;
   }
 
   async createSchedule(schedule: ScheduleModel): Promise<ScheduleModel> {
@@ -32,11 +36,21 @@ class ScheduleInteractor {
     return await this.scheduleDB.getSchedulesByEmpId(empId);
   }
 
-  async checkEmployeeAvailability(empId: number): Promise<boolean> {
-    // Implement the logic to check employee availability by checking leaves
-    // You can use the TimesheetDB and LeaveDB to fetch leaves and then check availability
-    // You may need to define additional functions in TimesheetDB and LeaveDB to retrieve leaves for an employee
-    return true; // Return true for now, assuming employee is available
+  async checkEmployeeAvailability(
+    empId: number,
+    dateToCheck: Date,
+  ): Promise<boolean> {
+    const leaves: LeaveModel[] = await this.getLeavesByEmpId(empId);
+    for (const leave of leaves) {
+      if (
+        leave.status !== LeaveStatus.Rejected &&
+        dateToCheck >= leave.startDate &&
+        dateToCheck <= leave.endDate
+      ) {
+        return false;
+      }
+    }
+    return true;
   }
 }
 

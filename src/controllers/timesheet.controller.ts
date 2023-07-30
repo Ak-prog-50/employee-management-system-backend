@@ -43,6 +43,8 @@ class TimesheetController {
 
   async updateTimesheet(req: Request, res: Response) {
     let timesheet: TimesheetModel = req.body;
+    const timesheet_id = Number(req.params.timesheet_id);
+    timesheet.timesheet_id = timesheet_id;
     if (req.user) {
       const empId = (req.user as User).empId;
       timesheet.emp_id = empId ? empId : timesheet.emp_id;
