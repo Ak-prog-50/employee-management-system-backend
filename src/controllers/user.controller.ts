@@ -111,8 +111,9 @@ const getUserController: TExpressAsyncCallback = async function (
   res,
   next,
 ) {
-  const { empId } = req.body;
-  if (typeof empId !== "number") {
+  const { empId } = req.params;
+  // console.log("🚀 ~ file: user.controller.ts:115 ~ empId:", empId)
+  if (typeof Number(empId) !== "number") {
     appErrorHandler(
       AppError.badRequest("Invalid employee id!"),
       req,
@@ -121,7 +122,7 @@ const getUserController: TExpressAsyncCallback = async function (
     );
     return;
   }
-  const ret = await getUser(empId, getUserModelById);
+  const ret = await getUser(Number(empId), getUserModelById);
   if (ret instanceof AppError) {
     appErrorHandler(ret, req, res, next);
     return;
