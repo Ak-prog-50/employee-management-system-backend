@@ -6,6 +6,13 @@ export default function timeSheetRouter() {
   const router = Router();
   const timesheetController = new TimesheetController();
 
+  router.get(
+    "/",
+    wrapAsyncExpress(
+      timesheetController.viewAllTimeSheets.bind(timesheetController),
+    ),
+  );
+
   router.post(
     "/",
     wrapAsyncExpress(

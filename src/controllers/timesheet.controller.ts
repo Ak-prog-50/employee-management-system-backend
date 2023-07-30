@@ -6,6 +6,10 @@ import TimesheetModel, {
 } from "../data-access/models/timesheet.model";
 import TimesheetList from "../data-access/timesheet.db";
 import User from "../domain/User";
+import appErrorHandler from "../utils/error-handling/appErrorHandler";
+import AppResponse from "../utils/AppResponse";
+import { INext } from "../types/vendor/INext";
+import AppError from "../utils/error-handling/AppErrror";
 
 // todo: no AppResponse, AppError, TExpressAsyncCallback
 
@@ -17,6 +21,14 @@ class TimesheetController {
   // constructor(timesheetInteractor: TimesheetInteractor) {
   //   this.timesheetInteractor = timesheetInteractor;
   // }
+  
+  async viewAllTimeSheets(req: Request, res: Response, next: INext) {
+    const ret = await this.timesheetInteractor.viewAllTimeSheets(req.user ? (req.user as User) : undefined);
+    if (ret instanceof AppError) {
+      appErrorHandler(ret, req, res, next);
+      return;
+    } else return AppResponse.success(res, ret.msg, ret.data);
+  }
 
   async createTimesheet(req: Request, res: Response) {
     let timesheet: TimesheetModel = req.body;
