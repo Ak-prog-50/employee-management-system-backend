@@ -20,20 +20,19 @@ class TargetInteractor {
     this.timeSheetDB = timeSheetDB;
   }
 
-  async createTarget(empId: number, date: Date): Promise<TargetModel | AppError> {
-    const allSchedules = await this.scheduleDB.getSchedulesByEmpIdOfDate(
-      empId,
-      date,
-    );
-    const allTimesheets = await this.timeSheetDB.getTimesheetsByEmpIdOfDate(
-      empId,
-      date,
-    );
+  async createTarget(
+    empId: number,
+    date: Date,
+  ): Promise<TargetModel | AppError> {
+    const allSchedules =
+      await this.scheduleDB.getApprovedSchedulesByEmpIdOfDate(empId, date);
+    const allTimesheets =
+      await this.timeSheetDB.getApprovedTimesheetsByEmpIdOfDate(empId, date);
 
     if (allSchedules.length === 0 || allTimesheets.length === 0) {
       return AppError.internal(
         empId.toString(),
-        "Schedules or TimeSheets are empty!",
+        "Approved Schedules or TimeSheets are empty!",
         "",
         {
           schedulesLength: allSchedules.length,

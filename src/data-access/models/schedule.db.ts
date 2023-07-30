@@ -1,6 +1,6 @@
 // data-access/schedule.db.ts
 
-import ScheduleModel from "./schedule.model";
+import ScheduleModel, { ScheduleStatus } from "./schedule.model";
 
 class ScheduleDB {
   async createSchedule(schedule: ScheduleModel): Promise<ScheduleModel> {
@@ -28,12 +28,16 @@ class ScheduleDB {
   }
 
   // todo: Ideally this should return one model. implement duplicate schedule prevention in a day and change return type of this.
-  async getSchedulesByEmpIdOfDate(
+  async getApprovedSchedulesByEmpIdOfDate(
     empId: number,
     date: Date,
   ): Promise<ScheduleModel[]> {
     return await ScheduleModel.findAll({
-      where: { empId: empId, scheduledDate: date },
+      where: {
+        empId: empId,
+        scheduledDate: date,
+        status: ScheduleStatus.Approved,
+      },
     });
   }
 }

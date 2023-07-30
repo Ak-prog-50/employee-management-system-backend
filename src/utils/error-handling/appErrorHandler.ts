@@ -15,7 +15,7 @@ function appErrorHandler(
     if (err.name === "Internal Error") {
       logger.error(winston_format("", err.message));
     }
-    res.status(err.statusCode).json({ error: err.name, message: err.message });
+    res.status(err.statusCode).json({ error: err.name, message: err.message, data: err?.data });
     return;
   }
   // todo: check why logger.error is not loggin err object

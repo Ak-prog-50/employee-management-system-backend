@@ -1,4 +1,4 @@
-import TimesheetModel from "./models/timesheet.model";
+import TimesheetModel, { TimesheetStatus } from "./models/timesheet.model";
 
 class TimesheetList {
   async createTimesheet(
@@ -37,12 +37,16 @@ class TimesheetList {
   }
 
   // todo: Ideally this should return one model. implement duplicate timesheet prevention in a day and change return type of this.
-  async getTimesheetsByEmpIdOfDate(
+  async getApprovedTimesheetsByEmpIdOfDate(
     empId: number,
     date: Date,
   ): Promise<TimesheetModel[]> {
     return await TimesheetModel.findAll({
-      where: { emp_id: empId, worked_date: date },
+      where: {
+        emp_id: empId,
+        worked_date: date,
+        status: TimesheetStatus.Approved,
+      },
     });
   }
 }
