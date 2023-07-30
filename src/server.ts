@@ -13,6 +13,7 @@ import "./services/auth";
 import session from "express-session";
 import registraionRequestRouter from "./routes/registrationReq.router";
 import leaveRouter from "./routes/leave.router";
+import timeSheetRouter from "./routes/timesheet.router";
 
 const { PORT } = process.env;
 const app = express();
@@ -54,6 +55,8 @@ app.get("/", (req: IRequest, res: IResponse) => {
 app.use("/user", userRouter());
 app.use("/registration-requests", registraionRequestRouter());
 app.use("/leaves", leaveRouter());
+// todo: make routes consistent
+app.use("/", timeSheetRouter())
 
 app.all("*", (req: IRequest, res: IResponse, next: NextFunction): void => {
   appErrorHandler(AppError.notFound("Route not found"), req, res, next);

@@ -4,11 +4,11 @@ import errHandlerAsync from "../utils/error-handling/errHandlerAsync";
 import UserModel from "../data-access/models/user.model";
 import { saveUser } from "../data-access/user.db";
 import HRPerson from "../domain/HRPerson";
-import { SEED_HR_PERSON_ID } from "../config";
 import { protectPwd } from "../utils/pwdHelpers";
 import RegistrationRequestModel from "../data-access/models/registrationRequest.model";
 import LeaveModel from "../data-access/models/leave.model";
 import Manager from "../domain/Manager";
+import TimesheetModel from "../data-access/models/timesheet.model";
 
 dotenv.config();
 
@@ -27,7 +27,12 @@ async function dbConnect() {
   if (err) console.error("Unable to connect to the database:", err);
   else {
     console.log("Database connection established!");
-    sequelize.addModels([UserModel, RegistrationRequestModel, LeaveModel]);
+    sequelize.addModels([
+      UserModel,
+      RegistrationRequestModel,
+      LeaveModel,
+      TimesheetModel,
+    ]);
     await sequelize.sync({ force: true, match: /_development$/ });
   }
 }
