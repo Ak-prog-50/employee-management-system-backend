@@ -8,6 +8,7 @@ import {
 } from "sequelize-typescript";
 import UserModel from "./user.model";
 
+// todo: add camelcase for column names
 @Table({ timestamps: true })
 class TimesheetModel extends Model<TimesheetModel> {
   @Column({ primaryKey: true, autoIncrement: true, allowNull: false })

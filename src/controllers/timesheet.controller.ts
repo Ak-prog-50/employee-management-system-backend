@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import TimesheetInteractor from "../interactors/timesheet.interactor";
 import TimesheetModel from "../data-access/models/timesheet.model";
 import TimesheetList from "../data-access/timesheet.db";
+import User from "../domain/User";
 
 // todo: no AppResponse, AppError, TExpressAsyncCallback
 
@@ -16,20 +17,37 @@ class TimesheetController {
   // }
 
   async createTimesheet(req: Request, res: Response) {
-    const timesheet: TimesheetModel = req.body;
+    let timesheet: TimesheetModel = req.body;
+    if (req.user) {
+      const empId = (req.user as User).empId;
+      timesheet.emp_id = empId ? empId : timesheet.emp_id;
+    } else {
+      res.status(401).json({ message: "Not logged in" });
+      return;
+    }
+
     try {
       const createdTimesheet = await this.timesheetInteractor.createTimesheet(
         timesheet,
       );
       res.status(201).json(createdTimesheet);
+      return;
     } catch (error) {
       console.error("Error creating timesheet", error);
-      res.status(500).json({ error: "Failed to create timesheet" });
+      res.status(500).json({ message: "Failed to create timesheet" });
+      return;
     }
   }
 
   async updateTimesheet(req: Request, res: Response) {
-    const timesheet: TimesheetModel = req.body;
+    let timesheet: TimesheetModel = req.body;
+    if (req.user) {
+      const empId = (req.user as User).empId;
+      timesheet.emp_id = empId ? empId : timesheet.emp_id;
+    } else {
+      res.status(401).json({ message: "Not logged in" });
+      return;
+    }
     try {
       const updatedTimesheet = await this.timesheetInteractor.updateTimesheet(
         timesheet,
@@ -37,28 +55,38 @@ class TimesheetController {
       res.status(200).json(updatedTimesheet);
     } catch (error) {
       console.error("Error updating timesheet", error);
-      res.status(500).json({ error: "Failed to update timesheet" });
+      res.status(500).json({ message: "Failed to update timesheet" });
     }
   }
 
   async getTimesheetById(req: Request, res: Response) {
+    if (!req.user) {
+      res.status(401).json({ message: "Not logged in" });
+      return;
+    }
+    // todo: pass user to interactor and check if user is prviledged
     const timesheet_id = Number(req.params.timesheet_id);
     try {
       const timesheet = await this.timesheetInteractor.getTimesheetById(
         timesheet_id,
       );
       if (!timesheet) {
-        res.status(404).json({ error: "Timesheet not found" });
+        res.status(404).json({ message: "Timesheet not found" });
       } else {
         res.status(200).json(timesheet);
       }
     } catch (error) {
       console.error("Error fetching timesheet", error);
-      res.status(500).json({ error: "Failed to fetch timesheet" });
+      res.status(500).json({ message: "Failed to fetch timesheet" });
     }
   }
 
   async getTimesheetsByEmpId(req: Request, res: Response) {
+    // todo: pass user to interactor and check if user is prviledged
+    if (!req.user) {
+      res.status(401).json({ message: "Not logged in" });
+      return;
+    }
     const emp_id = Number(req.params.emp_id);
     try {
       const timesheets = await this.timesheetInteractor.getTimesheetsByEmpId(
@@ -67,7 +95,7 @@ class TimesheetController {
       res.status(200).json(timesheets);
     } catch (error) {
       console.error("Error fetching timesheets", error);
-      res.status(500).json({ error: "Failed to fetch timesheets" });
+      res.status(500).json({ message: "Failed to fetch timesheets" });
     }
   }
 }
