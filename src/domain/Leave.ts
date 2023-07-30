@@ -57,6 +57,7 @@ export class Leave {
     return appDate <= threeMonthsAgo;
   }
 
+  //todo: data layer functions and service calls to interactor layer?
   static async requestLeave(
     userId: number,
     userAppDate: Date,

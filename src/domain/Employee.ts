@@ -16,6 +16,7 @@ class Employee extends User {
       params.role, // todo: hardcode role
     );
   }
+  //todo: data layer functions and service calls to interactor layer?
   async requestRegistrationApproval() {
     // todo: add logic to prevent duplicate registration
     return await saveRegistrationRequest(this);

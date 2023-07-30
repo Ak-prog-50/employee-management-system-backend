@@ -4,7 +4,7 @@ export enum NODE_ENVS {
 }
 
 export const GET_FRONTEND_URL = () => {
-  if (process.env.NODE_ENV_SECONDARY === NODE_ENVS.dev) {
+  if (process.env.NODE_ENV === NODE_ENVS.dev) {
     return "http://localhost:5173";
   } else return "prod_url";
 };

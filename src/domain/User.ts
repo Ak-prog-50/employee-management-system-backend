@@ -49,6 +49,8 @@ abstract class User {
     userDetails: User,
     saveUser: TSaveUser,
   ): Promise<UserModel | AppError> {
+    //todo: data layer functions and service calls in interactor layer?
+
     const HRPerson = (await import("./HRPerson")).default;
     const Manager = (await import("./Manager")).default;
     const Employee = (await import("./Employee")).default;
@@ -78,6 +80,7 @@ abstract class User {
   async viewRegistrationRequests(
     fetchRegistrationRequestsList: TfetchRegistrationRequestsList,
   ) {
+    //todo: data layer functions and service calls to interactor layer?
     const HRPerson = (await import("./HRPerson")).default; // WET
     const Manager = (await import("./Manager")).default;
     const canView = this instanceof HRPerson || this instanceof Manager;

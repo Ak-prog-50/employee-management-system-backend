@@ -19,7 +19,7 @@ export async function viewAllLeaves(loggedInUser: User | undefined): Promise<App
   // todo: add pagination
   try {
     if (loggedInUser instanceof User) {
-      // todo: move this part to domain layer and extract findAll to a data layer function.
+      // todo: extract findAll to a data layer function.
       const canViewAll = loggedInUser instanceof Manager;
       const leaves = canViewAll
         ? await LeaveModel.findAll()
@@ -34,7 +34,7 @@ export async function viewAllLeaves(loggedInUser: User | undefined): Promise<App
           : "Your Leaves are fetched.",
         data: leaves,
       };
-    } else return AppError.notAllowed("", "User has to be logged In!");
+    } else return AppError.notAllowed("User has to be logged In!");
   } catch (error) {
     return AppError.internal("", "Error viewing all leaves");
   }
@@ -93,7 +93,7 @@ export async function approveLeave(
         updateLeave,
       );
       return ret;
-    } else return AppError.notAllowed("", "User has to be logged In!");
+    } else return AppError.notAllowed("User has to be logged In!");
   } catch (error) {
     return AppError.internal("", "Error approving leave");
   }
@@ -126,7 +126,7 @@ export async function rejectLeave(
         updateLeave,
       );
       return ret;
-    } else return AppError.notAllowed("", "User has to be logged In!");
+    } else return AppError.notAllowed("User has to be logged In!");
   } catch (error) {
     return AppError.internal("", "Error rejecting leave");
   }
