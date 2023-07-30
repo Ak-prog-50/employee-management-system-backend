@@ -10,7 +10,7 @@ export default function targetReportRouter() {
   router.get(
     "/:empId",
     wrapAsyncExpress(
-      targetController.getTargetReportByEmpId.bind(targetController),
+      targetController.getTargetReportsOfEmpId.bind(targetController),
     ),
   );
 

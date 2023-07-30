@@ -47,23 +47,23 @@ class TargetController {
     }
   }
 
-  async getTargetReportByEmpId(req: Request, res: Response) {
+  async getTargetReportsOfEmpId(req: Request, res: Response) {
     // todo: check if empId matches the empId of req.user if req.user role is 'employee'
     const empId = Number(req.params.empId);
 
     try {
-      const targetReport = await this.targetInteractor.getTargetReportByEmpId(
+      const targetReports = await this.targetInteractor.getTargetReportByEmpId(
         empId,
       );
 
-      if (!targetReport) {
-        res.status(404).json({ message: "Target report not found" });
+      if (!targetReports) {
+        res.status(404).json({ message: "Target reports not found" });
       } else {
-        res.status(200).json(targetReport);
+        res.status(200).json(targetReports);
       }
     } catch (error) {
-      console.error("Error fetching target report", error);
-      res.status(500).json({ message: "Failed to fetch target report" });
+      console.error("Error fetching target reports", error);
+      res.status(500).json({ message: "Failed to fetch target reports" });
     }
   }
 }

@@ -13,12 +13,12 @@ class TargetDB {
     }
   }
 
-  async getTargetReportByEmpId(empId: number): Promise<TargetModel | null> {
+  async getTargetReportByEmpId(empId: number): Promise<TargetModel[] | null> {
     try {
-      const target = await TargetModel.findOne({
+      const targets = await TargetModel.findAll({
         where: { empId },
       });
-      return target;
+      return targets;
     } catch (error) {
       console.error("Error fetching target report", error);
       // todo: handle error

@@ -77,10 +77,10 @@ class TargetInteractor {
     }
   }
 
-  async getTargetReportByEmpId(empId: number): Promise<TargetModel | null> {
+  async getTargetReportByEmpId(empId: number): Promise<TargetModel[] | null> {
     try {
-      const target = await this.targetDB.getTargetReportByEmpId(empId);
-      return target;
+      const targets = await this.targetDB.getTargetReportByEmpId(empId);
+      return targets;
     } catch (error) {
       console.error("Error fetching target report in interactor", error);
       throw new Error("Failed to fetch target report");
