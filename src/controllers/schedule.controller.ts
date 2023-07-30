@@ -7,6 +7,10 @@ import ScheduleModel, {
 import User from "../domain/User";
 import ScheduleDB from "../data-access/models/schedule.db";
 import { getLeavesByEmpId } from "../data-access/leave.db";
+import appErrorHandler from "../utils/error-handling/appErrorHandler";
+import AppError from "../utils/error-handling/AppErrror";
+import AppResponse from "../utils/AppResponse";
+import { INext } from "../types/vendor/INext";
 
 class ScheduleController {
   private scheduleInteractor: ScheduleInteractor = new ScheduleInteractor(
@@ -17,6 +21,16 @@ class ScheduleController {
   //   constructor(scheduleInteractor: ScheduleInteractor) {
   //     this.scheduleInteractor = scheduleInteractor;
   //   }
+
+  async viewAllSchedules(req: Request, res: Response, next: INext) {
+    const ret = await this.scheduleInteractor.viewAllSchedules(
+      req.user ? (req.user as User) : undefined,
+    );
+    if (ret instanceof AppError) {
+      appErrorHandler(ret, req, res, next);
+      return;
+    } else return AppResponse.success(res, ret.msg, ret.data);
+  }
 
   async createSchedule(req: Request, res: Response) {
     // todo: move logic to interactor

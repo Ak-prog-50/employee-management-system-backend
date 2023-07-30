@@ -6,6 +6,13 @@ export default function scheduleRouter() {
   const router = Router();
   const scheduleController = new ScheduleController();
 
+  router.get(
+    "/",
+    wrapAsyncExpress(
+      scheduleController.viewAllSchedules.bind(scheduleController),
+    ),
+  );
+
   router.post(
     "/",
     wrapAsyncExpress(
