@@ -15,6 +15,7 @@ import registraionRequestRouter from "./routes/registrationReq.router";
 import leaveRouter from "./routes/leave.router";
 import timeSheetRouter from "./routes/timesheet.router";
 import scheduleRouter from "./routes/schedule.router";
+import targetReportRouter from "./routes/target.router";
 
 const { PORT } = process.env;
 const app = express();
@@ -58,6 +59,7 @@ app.use("/registration-requests", registraionRequestRouter());
 app.use("/leaves", leaveRouter());
 app.use("/timesheets", timeSheetRouter());
 app.use("/schedules", scheduleRouter());
+app.use("/target-report", targetReportRouter())
 
 app.all("*", (req: IRequest, res: IResponse, next: NextFunction): void => {
   appErrorHandler(AppError.notFound("Route not found"), req, res, next);

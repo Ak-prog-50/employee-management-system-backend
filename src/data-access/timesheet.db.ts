@@ -35,6 +35,16 @@ class TimesheetList {
     });
     return timesheets;
   }
+
+  // todo: Ideally this should return one model. implement duplicate timesheet prevention in a day and change return type of this.
+  async getTimesheetsByEmpIdOfDate(
+    empId: number,
+    date: Date,
+  ): Promise<TimesheetModel[]> {
+    return await TimesheetModel.findAll({
+      where: { emp_id: empId, worked_date: date },
+    });
+  }
 }
 
 export default TimesheetList;

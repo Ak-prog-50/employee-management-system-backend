@@ -27,7 +27,10 @@ class ScheduleModel extends Model<ScheduleModel> {
   @Column({ type: DataType.DATEONLY, allowNull: false })
   scheduledDate!: Date;
 
-  @Column(DataType.INTEGER)
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
   scheduledCollection?: number;
 
   @Column(DataType.INTEGER)

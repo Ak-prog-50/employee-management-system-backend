@@ -11,6 +11,7 @@ import Manager from "../domain/Manager";
 import TimesheetModel from "../data-access/models/timesheet.model";
 import Employee from "../domain/Employee";
 import ScheduleModel from "../data-access/models/schedule.model";
+import TargetModel from "../data-access/models/target.model";
 
 dotenv.config();
 
@@ -34,7 +35,8 @@ async function dbConnect() {
       RegistrationRequestModel,
       LeaveModel,
       TimesheetModel,
-      ScheduleModel
+      ScheduleModel,
+      TargetModel
     ]);
     await sequelize.sync({ force: true, match: /_development$/ });
   }

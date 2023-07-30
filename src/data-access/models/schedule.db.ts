@@ -26,6 +26,16 @@ class ScheduleDB {
   async getSchedulesByEmpId(empId: number): Promise<ScheduleModel[]> {
     return await ScheduleModel.findAll({ where: { empId } });
   }
+
+  // todo: Ideally this should return one model. implement duplicate schedule prevention in a day and change return type of this.
+  async getSchedulesByEmpIdOfDate(
+    empId: number,
+    date: Date,
+  ): Promise<ScheduleModel[]> {
+    return await ScheduleModel.findAll({
+      where: { empId: empId, scheduledDate: date },
+    });
+  }
 }
 
 export default ScheduleDB;

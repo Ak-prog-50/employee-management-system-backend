@@ -26,7 +26,7 @@ class TimesheetModel extends Model<TimesheetModel> {
   emp_id!: number;
 
   @Column({ type: DataType.INTEGER, allowNull: false })
-  week!: number;
+  week!: number; // todo: won't be used. remove later
 
   @Column({ type: DataType.DATEONLY, allowNull: false })
   worked_date!: Date;
