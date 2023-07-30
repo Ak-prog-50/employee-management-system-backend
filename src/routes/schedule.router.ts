@@ -48,5 +48,12 @@ export default function scheduleRouter() {
     ),
   );
 
+  router.get(
+    "/availability-check/:emp_id/:date_to_check",
+    wrapAsyncExpress(
+      scheduleController.checkEmployeeAvailability.bind(scheduleController),
+    ),
+  );
+
   return router;
 }

@@ -56,10 +56,10 @@ class ScheduleController {
 
   async updateSchedule(req: Request, res: Response) {
     // todo: move logic to interactor
+    const loggedInUserRole = req.user ? (req.user as User).role : null;
     if (
-      !req.user ||
-      (req.user && (req.user as User).role !== "hrPerson") ||
-      (req.user && (req.user as User).role !== "manager")
+      !loggedInUserRole ||
+      (loggedInUserRole && !["hrPerson", "manager"].includes(loggedInUserRole))
     ) {
       res
         .status(401)
@@ -68,7 +68,7 @@ class ScheduleController {
     }
 
     const schedule: ScheduleModel = req.body;
-    const scheduleId = Number(req.params.scheduleId);
+    const scheduleId = Number(req.params.schedule_id);
     schedule.scheduleId = scheduleId;
     // todo: check req.body props
 
@@ -78,7 +78,6 @@ class ScheduleController {
         schedule.empId,
         schedule.scheduledDate,
       );
-
     if (!isEmployeeAvailable) {
       res.status(400).json({ message: "Employee is not available" });
       return;
@@ -106,7 +105,7 @@ class ScheduleController {
     }
 
     // todo: pass user to interactor and check if user is privileged
-    const scheduleId = Number(req.params.scheduleId);
+    const scheduleId = Number(req.params.schedule_id);
     try {
       const schedule = await this.scheduleInteractor.getScheduleById(
         scheduleId,
@@ -149,8 +148,9 @@ class ScheduleController {
       res.status(401).json({ message: "Not logged in" });
       return;
     }
+    // todo: addional user role checks if needed.
     const empId = Number(req.params.emp_id);
-    const date = new Date(req.params.date);
+    const date = new Date(req.params.date_to_check);
     try {
       const isEmployeeAvailable =
         await this.scheduleInteractor.checkEmployeeAvailability(empId, date);
