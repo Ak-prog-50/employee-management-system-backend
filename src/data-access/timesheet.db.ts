@@ -16,6 +16,7 @@ class TimesheetList {
     });
 
     if (!timesheet) {
+      // todo: handle error
       throw new Error("Timesheet not found");
     }
 

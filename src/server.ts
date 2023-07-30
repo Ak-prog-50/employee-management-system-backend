@@ -55,8 +55,7 @@ app.get("/", (req: IRequest, res: IResponse) => {
 app.use("/user", userRouter());
 app.use("/registration-requests", registraionRequestRouter());
 app.use("/leaves", leaveRouter());
-// todo: make routes consistent
-app.use("/", timeSheetRouter())
+app.use("/timesheets", timeSheetRouter())
 
 app.all("*", (req: IRequest, res: IResponse, next: NextFunction): void => {
   appErrorHandler(AppError.notFound("Route not found"), req, res, next);

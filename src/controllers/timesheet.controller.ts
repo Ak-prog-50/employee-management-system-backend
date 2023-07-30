@@ -1,7 +1,9 @@
 // controllers/timesheetController.ts
 import { Request, Response } from "express";
 import TimesheetInteractor from "../interactors/timesheet.interactor";
-import TimesheetModel from "../data-access/models/timesheet.model";
+import TimesheetModel, {
+  TimesheetStatus,
+} from "../data-access/models/timesheet.model";
 import TimesheetList from "../data-access/timesheet.db";
 import User from "../domain/User";
 
@@ -96,6 +98,60 @@ class TimesheetController {
     } catch (error) {
       console.error("Error fetching timesheets", error);
       res.status(500).json({ message: "Failed to fetch timesheets" });
+    }
+  }
+
+  async approveTimesheet(req: Request, res: Response) {
+    // todo: move logic to interactor
+    if (!req.user || (req.user && (req.user as User).role !== "manager")) {
+      res.status(401).json({ message: "User not logged In or no prviledged user!" });
+      return;
+    }
+
+    const timesheet_id = Number(req.params.timesheet_id);
+    try {
+      const timesheet = await this.timesheetInteractor.getTimesheetById(
+        timesheet_id,
+      );
+      if (!timesheet) {
+        res.status(404).json({ message: "Timesheet not found" });
+      } else {
+        timesheet.status = TimesheetStatus.Approved;
+        const updatedTimesheet = await this.timesheetInteractor.updateTimesheet(
+          timesheet.dataValues,
+        );
+        res.status(200).json(updatedTimesheet);
+      }
+    } catch (error) {
+      console.error("Error approving timesheet", error);
+      res.status(500).json({ message: "Failed to approve timesheet" });
+    }
+  }
+
+  async rejectTimesheet(req: Request, res: Response) {
+    // todo: move logic to interactor
+    if (!req.user || (req.user && (req.user as User).role !== "manager")) {
+      res.status(401).json({ message: "User not logged In or no prviledged user!" });
+      return;
+    }
+
+    const timesheet_id = Number(req.params.timesheet_id);
+    try {
+      const timesheet = await this.timesheetInteractor.getTimesheetById(
+        timesheet_id,
+      );
+      if (!timesheet) {
+        res.status(404).json({ message: "Timesheet not found" });
+      } else {
+        timesheet.status = TimesheetStatus.Rejected;
+        const updatedTimesheet = await this.timesheetInteractor.updateTimesheet(
+          timesheet.dataValues,
+        );
+        res.status(200).json(updatedTimesheet);
+      }
+    } catch (error) {
+      console.error("Error rejecting timesheet", error);
+      res.status(500).json({ message: "Failed to reject timesheet" });
     }
   }
 }

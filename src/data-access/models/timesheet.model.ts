@@ -5,8 +5,15 @@ import {
   Table,
   DataType,
   ForeignKey,
+  Default,
 } from "sequelize-typescript";
 import UserModel from "./user.model";
+
+export enum TimesheetStatus {
+  Pending = "pending",
+  Approved = "approved",
+  Rejected = "rejected",
+}
 
 // todo: add camelcase for column names
 @Table({ timestamps: true })
@@ -32,6 +39,14 @@ class TimesheetModel extends Model<TimesheetModel> {
 
   @Column(DataType.INTEGER)
   collectedAmount?: number;
+
+  @Default(TimesheetStatus.Pending)
+  @Column({
+    type: DataType.ENUM,
+    values: Object.values(TimesheetStatus),
+    allowNull: false,
+  })
+  status!: TimesheetStatus;
 }
 
 export default TimesheetModel;
