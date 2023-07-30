@@ -29,7 +29,7 @@ async function getLeaveById(leaveId: number): Promise<LeaveModel | null> {
       return null;
     }
 
-    return new LeaveModel({ ...leave });
+    return leave;
   } catch (error) {
     // todo: return <LeaveModel | AppError>
     throw new Error("Error retrieving leave!");
@@ -41,17 +41,20 @@ const updateLeave: TUpdateLeaveDB = async function (
   leaveIdToUpdate: number,
 ): Promise<void | AppError> {
   try {
-    await LeaveModel.update(
+    const ret = await LeaveModel.update(
       {
         leaveType: leave.leaveType,
-        leaveStatus: leave.status,
+        status: leave.status,
       },
       {
         where: {
           leaveId: leaveIdToUpdate,
         },
+        fields: ["leaveType", "status"],
+        // returning: true,
       },
     );
+    // console.log("ret", ret);
   } catch (error) {
     return AppError.internal(
       leave.empId.toString(),

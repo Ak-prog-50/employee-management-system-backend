@@ -81,8 +81,6 @@ export class Leave {
 
   async approveLeave(
     actionPerformerRole: TRole,
-    leaveIdToApprove: number,
-    updateLeaveRequest: TUpdateLeaveDB,
   ): Promise<void | AppError> {
     if (actionPerformerRole !== "manager")
       return AppError.notAllowed("User not allowed to approve leaves!");
@@ -90,9 +88,7 @@ export class Leave {
     // todo: actionPerformer can call this more than once. Return a message if already approved at the interactor layer.
     // todo: Manager can request and approve leaves by himself.
     this.status = LeaveStatus.Approved;
-    const ret = await updateLeaveRequest(this, leaveIdToApprove);
-    // todo: notify employee
-    return ret;
+
   }
 
   async rejectLeave(
@@ -106,9 +102,6 @@ export class Leave {
     // todo: actionPerformer can call this more than once. Return a message if already approved at the interactor layer.
     // todo: Manager can request and approve leaves by himself.
     this.status = LeaveStatus.Rejected;
-    const ret = await updateLeaveRequest(this, leaveIdToApprove);
-    // todo: notify employee
-    return ret;
     // Save the updated leave status to the database or any appropriate data store
   }
 

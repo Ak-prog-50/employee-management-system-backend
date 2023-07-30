@@ -87,12 +87,11 @@ export async function approveLeave(
           loggedInUser.email,
           "Logged In user Role not found!",
         );
-      const ret = await leave.approveLeave(
-        loggedInUser.role,
-        leaveId,
-        updateLeave,
-      );
-      return ret;
+      const ret = await leave.approveLeave(loggedInUser.role);
+      if (ret instanceof AppError) return ret;
+      const updateRet = await updateLeave(leave, leaveId);
+      // todo: notify employee
+      return updateRet;
     } else return AppError.notAllowed("User has to be logged In!");
   } catch (error) {
     return AppError.internal("", "Error approving leave");
@@ -125,7 +124,10 @@ export async function rejectLeave(
         leaveId,
         updateLeave,
       );
-      return ret;
+      if (ret instanceof AppError) return ret;
+      const updateRet = await updateLeave(leave, leaveId);
+      // todo: notify employee
+      return updateRet;
     } else return AppError.notAllowed("User has to be logged In!");
   } catch (error) {
     return AppError.internal("", "Error rejecting leave");
