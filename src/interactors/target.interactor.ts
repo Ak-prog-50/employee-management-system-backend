@@ -3,6 +3,7 @@ import ScheduleDB from "../data-access/models/schedule.db";
 import TargetModel from "../data-access/models/target.model";
 import TargetDB from "../data-access/target.db";
 import TimesheetList from "../data-access/timesheet.db";
+import AppError from "../utils/error-handling/AppErrror";
 
 class TargetInteractor {
   private targetDB: TargetDB;
@@ -19,7 +20,7 @@ class TargetInteractor {
     this.timeSheetDB = timeSheetDB;
   }
 
-  async createTarget(empId: number, date: Date): Promise<TargetModel> {
+  async createTarget(empId: number, date: Date): Promise<TargetModel | AppError> {
     const allSchedules = await this.scheduleDB.getSchedulesByEmpIdOfDate(
       empId,
       date,
@@ -28,6 +29,18 @@ class TargetInteractor {
       empId,
       date,
     );
+
+    if (allSchedules.length === 0 || allTimesheets.length === 0) {
+      return AppError.internal(
+        empId.toString(),
+        "Schedules or TimeSheets are empty!",
+        "",
+        {
+          schedulesLength: allSchedules.length,
+          timesheetsLength: allTimesheets.length,
+        },
+      );
+    }
     // Step 1: Map through schedules and get the sum of scheduledAmounts
     const scheduledAmountSum = allSchedules.reduce(
       (sum, schedule) => sum + (schedule?.scheduledCollection ?? 0),
@@ -47,14 +60,17 @@ class TargetInteractor {
     const targetPercentage = (collectedAmountSum / scheduledAmountSum) * 100;
 
     // 4. then create new TargetModel and assign it to variable target.
-    const target = new TargetModel();
-    target.empId = empId;
-    target.collectedAmount = collectedAmountSum;
-    target.scheduledAmount = scheduledAmountSum;
-    target.targetCoveragePercentage = targetPercentage;
-    
+    const target = {
+      empId: empId,
+      collectedAmount: collectedAmountSum,
+      scheduledAmount: scheduledAmountSum,
+      targetCoveragePercentage: targetPercentage,
+    };
+
     try {
-      const createdTarget = await this.targetDB.createTarget(target);
+      const createdTarget = await this.targetDB.createTarget(
+        new TargetModel({ ...target }),
+      );
       return createdTarget;
     } catch (error) {
       console.error("Error creating target in interactor", error);

@@ -3,7 +3,7 @@ import { Model, Column, DataType, ForeignKey, Table } from "sequelize-typescript
 import UserModel from "./user.model";
 
 @Table({ timestamps: true })
-class TargetModel extends Model<TargetModel> {
+class TargetModel extends Model {
   @Column({ primaryKey: true, autoIncrement: true, allowNull: false })
   targetId!: number;
 

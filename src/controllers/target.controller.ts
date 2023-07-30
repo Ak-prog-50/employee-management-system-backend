@@ -5,6 +5,10 @@ import TargetModel from "../data-access/models/target.model";
 import TargetDB from "../data-access/target.db";
 import ScheduleDB from "../data-access/models/schedule.db";
 import TimesheetList from "../data-access/timesheet.db";
+import User from "../domain/User";
+import AppError from "../utils/error-handling/AppErrror";
+import appErrorHandler from "../utils/error-handling/appErrorHandler";
+import { INext } from "../types/vendor/INext";
 
 class TargetController {
   private targetInteractor: TargetInteractor = new TargetInteractor(
@@ -17,24 +21,34 @@ class TargetController {
   //     this.targetInteractor = targetInteractor;
   //   }
 
-  async createTarget(req: Request, res: Response) {
+  async createTarget(req: Request, res: Response, next: INext) {
     const empId: number = req.body.empId;
     const date: Date = new Date(req.body.date);
-    // todo: req.user
+    // todo: move to interactor
+    if (!req.user || (req.user && (req.user as User).role !== "manager")) {
+      res
+        .status(401)
+        .json({ message: "User not logged In or no prviledged user!" });
+      return;
+    }
 
     try {
-      const createdTarget = await this.targetInteractor.createTarget(
+      const createTargetRet = await this.targetInteractor.createTarget(
         empId,
         date,
       );
-      res.status(201).json(createdTarget);
+      if (createTargetRet instanceof AppError) {
+        appErrorHandler(createTargetRet, req, res, next);
+        return;
+      } else res.status(201).json(createTargetRet);
     } catch (error) {
-      console.error("Error creating target", error);
+      console.error("Error creating target at contoller", error);
       res.status(500).json({ error: "Failed to create target" });
     }
   }
 
   async getTargetReportByEmpId(req: Request, res: Response) {
+    // todo: check if empId matches the empId of req.user if req.user role is 'employee'
     const empId = Number(req.params.empId);
 
     try {
