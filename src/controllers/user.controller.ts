@@ -1,11 +1,15 @@
-import { createUser } from "../interactors/user.interactor";
+import { createUser, getUser } from "../interactors/user.interactor";
 import { TExpressAsyncCallback } from "../types/expressTypes";
 import AppResponse from "../utils/AppResponse";
 import AppError from "../utils/error-handling/AppErrror";
 import errHandlerAsync from "../utils/error-handling/errHandlerAsync";
 import { IinteractorReturn } from "../types/generalTypes";
 import appErrorHandler from "../utils/error-handling/appErrorHandler";
-import { getUserById, saveUser } from "../data-access/user.db";
+import {
+  getUserById,
+  getUserModelById,
+  saveUser,
+} from "../data-access/user.db";
 import User from "../domain/User";
 import UserModel from "../data-access/models/user.model";
 import Employee from "../domain/Employee";
@@ -102,6 +106,31 @@ const createUserController: TExpressAsyncCallback = async function (
   }
 };
 
+const getUserController: TExpressAsyncCallback = async function (
+  req,
+  res,
+  next,
+) {
+  const { empId } = req.body;
+  if (typeof empId !== "number") {
+    appErrorHandler(
+      AppError.badRequest("Invalid employee id!"),
+      req,
+      res,
+      next,
+    );
+    return;
+  }
+  const ret = await getUser(empId, getUserModelById);
+  if (ret instanceof AppError) {
+    appErrorHandler(ret, req, res, next);
+    return;
+  } else {
+    AppResponse.success(res, "User found", ret);
+    return;
+  }
+};
+
 /**
  * email and password should be present in req.body.
  * it will be extracted by passport.js. Upon login user
@@ -146,4 +175,9 @@ const logoutUserController = async (
   });
 };
 
-export { createUserController, loginUserController, logoutUserController };
+export {
+  createUserController,
+  getUserController,
+  loginUserController,
+  logoutUserController,
+};

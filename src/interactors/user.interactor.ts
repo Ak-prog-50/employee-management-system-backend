@@ -2,11 +2,13 @@ import RegistrationRequestModel from "../data-access/models/registrationRequest.
 import UserModel from "../data-access/models/user.model";
 import Employee from "../domain/Employee";
 import User from "../domain/User";
+import logger from "../logger";
 import { IinteractorReturn } from "../types/generalTypes";
 import AppError from "../utils/error-handling/AppErrror";
 
 export type TSaveUser = (user: User, password: string) => Promise<UserModel>;
 export type TGetUserById = (empId: number) => Promise<User | null>;
+export type TGetUserModelById = (empId: number) => Promise<UserModel | null>;
 
 interface ICreateUserDB {
   saveUser: TSaveUser;
@@ -43,4 +45,19 @@ async function createUser(
   }
 }
 
-export { createUser };
+async function getUser(
+  empId: number,
+  getUserModelById: TGetUserModelById,
+): Promise<UserModel | AppError> {
+  try {
+    const user = await getUserModelById(empId);
+    if (user === null) {
+      return AppError.notFound("User with given id not found");
+    } else return user;
+  } catch (error) {
+    logger.debug("error at get user", error);
+    return AppError.internal(empId.toString(), "Something went wrong!");
+  }
+}
+
+export { createUser, getUser };

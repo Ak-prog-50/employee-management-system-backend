@@ -2,7 +2,7 @@ import Employee from "../domain/Employee";
 import HRPerson from "../domain/HRPerson";
 import Manager from "../domain/Manager";
 import User from "../domain/User";
-import { TGetUserById, TSaveUser } from "../interactors/user.interactor";
+import { TGetUserById, TGetUserModelById, TSaveUser } from "../interactors/user.interactor";
 import logger from "../logger";
 import UserModel from "./models/user.model";
 
@@ -35,8 +35,12 @@ const getUserById: TGetUserById = async (empId) => {
   }
 };
 
+const getUserModelById: TGetUserModelById = async (empId) => {
+  return await UserModel.findByPk(empId);
+};
+
 async function findUserByEmail(email: string): Promise<UserModel | null> {
   return await UserModel.findOne({ where: { email: email } });
 }
 
-export { getUserById, saveUser, findUserByEmail };
+export { getUserById, saveUser, findUserByEmail, getUserModelById };
