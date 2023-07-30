@@ -9,6 +9,8 @@ import RegistrationRequestModel from "../data-access/models/registrationRequest.
 import LeaveModel from "../data-access/models/leave.model";
 import Manager from "../domain/Manager";
 import TimesheetModel from "../data-access/models/timesheet.model";
+import Employee from "../domain/Employee";
+import ScheduleModel from "../data-access/models/schedule.model";
 
 dotenv.config();
 
@@ -32,6 +34,7 @@ async function dbConnect() {
       RegistrationRequestModel,
       LeaveModel,
       TimesheetModel,
+      ScheduleModel
     ]);
     await sequelize.sync({ force: true, match: /_development$/ });
   }
@@ -60,7 +63,7 @@ async function seedDB() {
     dob: new Date("1982-05-15"),
     appDate: new Date("2018-03-20"),
   });
-  const seedEmployee = new HRPerson({
+  const seedEmployee = new Employee({
     empId: null, // empId will be auto-incremented
     name: "Alice Johnson",
     contactNo: "8765432109",
@@ -70,6 +73,7 @@ async function seedDB() {
     address: "123 Elm Street, Villageland",
     dob: new Date("1995-12-10"),
     appDate: new Date("2022-01-15"),
+    role: "employee"
   });
   const protectedPwd = await protectPwd("password");
   const promises = [

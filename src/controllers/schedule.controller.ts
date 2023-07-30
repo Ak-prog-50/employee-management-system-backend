@@ -1,7 +1,9 @@
 // controllers/schedule.controller.ts
 import { Request, Response } from "express";
 import ScheduleInteractor from "../interactors/schedule.interactor";
-import ScheduleModel, { ScheduleStatus } from "../data-access/models/schedule.model";
+import ScheduleModel, {
+  ScheduleStatus,
+} from "../data-access/models/schedule.model";
 import User from "../domain/User";
 import ScheduleDB from "../data-access/models/schedule.db";
 import { getLeavesByEmpId } from "../data-access/leave.db";
@@ -127,6 +129,10 @@ class ScheduleController {
       return;
     }
     const empId = Number(req.params.emp_id);
+    if (typeof empId !== "number") {
+      res.status(400).json({ message: "Invalid employee id" });
+      return;
+    }
     try {
       const schedules = await this.scheduleInteractor.getSchedulesByEmpId(
         empId,
