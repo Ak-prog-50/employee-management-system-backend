@@ -2,6 +2,7 @@ import TimesheetModel from "../data-access/models/timesheet.model";
 import TimesheetList from "../data-access/timesheet.db";
 
 // todo: create domain layer for if there's core business logic
+// todo: implement notification sending
 
 class TimesheetInteractor {
   private timesheetList: TimesheetList;
