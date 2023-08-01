@@ -1,10 +1,14 @@
 import { updateLeaveBalance } from "../data-access/leave.db";
 import LeaveModel from "../data-access/models/leave.model";
-import { getUserById, getUserModelById } from "../data-access/user.db";
+import {
+  getAllUsersByRole,
+  getUserModelById,
+} from "../data-access/user.db";
 import {
   TCreateLeaveDB,
   TUpdateLeaveDB,
 } from "../interactors/leave.interactor";
+import { sendEmail } from "../services/emailService";
 import { TRole } from "../types/generalTypes";
 import AppError from "../utils/error-handling/AppErrror";
 import getDateDiff from "../utils/getDateDiff";
@@ -84,9 +88,23 @@ export class Leave {
     }
 
     const leave = new Leave({ ...leaveObj, status: LeaveStatus.Pending });
+
+    const getAllRecipients = await getAllUsersByRole("manager");
+    const emailList = getAllRecipients.map((reci) => reci.email);
+    const mailOptions = {
+      from: user.email, // Replace with your "From" email name and address
+      to: emailList.join(", "),
+      subject: "Employee is requesting approval for leave", // Email subject
+      html: `
+        <p>Employee ${this.name} is requesting approval for leave. Please attend to the matter.</p>
+        <p>Best regards,</p>
+        <p>Micro Credit Investments</p>
+      `,
+    };
+    await sendEmail(mailOptions);
     // Save the leave request to the database or any appropriate data store
     return await saveLeaveRequest(leave);
-    // todo: notify Manager ( save notifications to data store and display in ui. maybe send email of all requested leaves after every 24Hrs? )
+    // todo: ( save notifications to data store and display in ui. maybe send email of all requested leaves after every 24Hrs? )
   }
 
   async approveLeave(

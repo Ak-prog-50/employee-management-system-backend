@@ -8,6 +8,7 @@ import {
   TSaveUser,
 } from "../interactors/user.interactor";
 import logger from "../logger";
+import { TRole } from "../types/generalTypes";
 import UserModel from "./models/user.model";
 
 const saveUser: TSaveUser = async function (user: User, password: string) {
@@ -72,4 +73,20 @@ async function findUserByEmail(email: string): Promise<UserModel | null> {
   return await UserModel.findOne({ where: { email: email } });
 }
 
-export { getUserById, saveUser, findUserByEmail, getUserModelById, updateUserDB};
+async function getAllUsersByRole(role: TRole): Promise<UserModel[]> {
+  try {
+    return await UserModel.findAll({ where: { role: role } });
+  } catch (error) {
+    logger.error("Error fetching users by role:", error);
+    return [];
+  }
+}
+
+export {
+  getUserById,
+  saveUser,
+  findUserByEmail,
+  getUserModelById,
+  updateUserDB,
+  getAllUsersByRole
+};

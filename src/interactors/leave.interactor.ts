@@ -1,7 +1,9 @@
 import LeaveModel from "../data-access/models/leave.model";
+import { getAllUsersByRole, getUserById } from "../data-access/user.db";
 import { ILeaveParams, Leave, LeaveStatus } from "../domain/Leave";
 import Manager from "../domain/Manager";
 import User from "../domain/User";
+import { sendEmail } from "../services/emailService";
 import AppError from "../utils/error-handling/AppErrror";
 
 export type TCreateLeaveDB = (leave: Leave) => Promise<LeaveModel | AppError>;
@@ -94,6 +96,20 @@ export async function approveLeave(
       );
       if (ret instanceof AppError) return ret;
       const updateRet = await updateLeave(leave, leaveId);
+
+      const getManager = await getAllUsersByRole("manager");
+      const managerEmail = getManager.map((reci) => reci.email);
+      const userEmail = getUserById(loggedInUser.empId);
+      const mailOptions = {
+        from: managerEmail, // Replace with your "From" email name and address
+        to: userEmail,
+        subject: "Leave Request Approved!", // Email subject
+        html: `
+          <p>Best regards,</p>
+          <p>Micro Credit Investments</p>
+        `,
+      };
+      if (!(updateRet instanceof AppError)) await sendEmail(mailOptions);
       // todo: notify employee
       return updateRet;
     } else return AppError.notAllowed("User has to be logged In!");
@@ -109,7 +125,7 @@ export async function rejectLeave(
   updateLeave: TUpdateLeaveDB,
 ): Promise<void | AppError> {
   try {
-    if (loggedInUser instanceof User) {
+    if (loggedInUser instanceof User && loggedInUser.empId !== null) {
       // Find the leave by leaveId in the database
       const leaveInstanceDB = await getLeaveById(leaveId);
       if (!leaveInstanceDB) {
@@ -130,6 +146,20 @@ export async function rejectLeave(
       );
       if (ret instanceof AppError) return ret;
       const updateRet = await updateLeave(leave, leaveId);
+
+      const getManager = await getAllUsersByRole("manager");
+      const managerEmail = getManager.map((reci) => reci.email);
+      const userEmail = getUserById(loggedInUser.empId);
+      const mailOptions = {
+        from: managerEmail, // Replace with your "From" email name and address
+        to: userEmail,
+        subject: "Leave Request Rejected!", // Email subject
+        html: `
+          <p>Best regards,</p>
+          <p>Micro Credit Investments</p>
+        `,
+      };
+      if (!(updateRet instanceof AppError)) await sendEmail(mailOptions);
       // todo: notify employee
       return updateRet;
     } else return AppError.notAllowed("User has to be logged In!");

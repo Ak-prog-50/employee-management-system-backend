@@ -1,13 +1,23 @@
-import { createTransport } from "nodemailer";
+import { createTransport, Transporter } from "nodemailer";
 import { LeaveStatus } from "../domain/Leave";
 
-// Function to send an email to the employee with the temporary password
-export async function notifyRegistrant(
-  email: string,
-  tempPassword: string,
+// Function to send an email using the provided transporter and mail options
+export async function sendEmail(
+  mailOptions: any,
 ): Promise<void> {
-  // Setup the email transporter (using a test account for example)
-  const transporter = createTransport({
+  const transporter = createEmailTransporter();
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log("Email sent successfully.");
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw new Error("Error sending email.");
+  }
+}
+
+// Function to create an email transporter with the specified configuration
+function createEmailTransporter(): Transporter {
+  return createTransport({
     host: "sandbox.smtp.mailtrap.io", // Replace with your SMTP server host
     port: 2525, // Replace with the port number
     secure: false, // Set to true if using SSL/TLS
@@ -16,7 +26,13 @@ export async function notifyRegistrant(
       pass: process.env.MAILTRAP_PWD,
     },
   });
+}
 
+// Function to send an email to the employee with the temporary password
+export async function notifyRegistrant(
+  email: string,
+  tempPassword: string,
+): Promise<void> {
   // Compose the email message
   const mailOptions = {
     from: "HR Team <hr@microcredit.com>", // Replace with your "From" email name and address
@@ -33,7 +49,7 @@ export async function notifyRegistrant(
   };
 
   // Send the email
-  await transporter.sendMail(mailOptions);
+  await sendEmail(mailOptions);
 }
 
 export async function notifyEmployeeLeaveStatus(
