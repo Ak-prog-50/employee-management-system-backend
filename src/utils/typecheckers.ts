@@ -7,12 +7,12 @@ export function isUserParams(obj: any): obj is IUserParams {
     typeof obj.name === "string" &&
     typeof obj.contactNo === "string" &&
     typeof obj.email === "string" &&
-    typeof obj.age === "number" &&
+    typeof parseInt(obj.age) === "number" &&
     typeof obj.designation === "string" &&
     typeof obj.address === "string" &&
     new Date(obj.dob) instanceof Date &&
     new Date(obj.appDate) instanceof Date &&
-    (obj.empId === null || typeof obj.empId === "number") &&
+    (obj.empId === null || typeof parseInt(obj.empId) === "number") &&
     (obj.role === null || typeof obj.role === "string")
   );
 }
