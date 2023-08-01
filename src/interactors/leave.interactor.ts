@@ -61,6 +61,7 @@ export async function requestLeave(
     );
     return requestedLeave;
   } catch (error) {
+    console.error('error requesting leave', error)
     return AppError.internal(
       leaveObj.empId.toString(),
       "Error requesting leave",

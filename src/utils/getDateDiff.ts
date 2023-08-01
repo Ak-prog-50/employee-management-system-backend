@@ -1,5 +1,7 @@
-function getDateDiff(startDate: Date, endDate: Date): number {
+function getDateDiff(startDate: Date | string, endDate: Date | string): number {
   // Calculate the time difference in milliseconds between the two dates
+  endDate = new Date(endDate);
+  startDate = new Date(startDate);
   const timeDifference = endDate.getTime() - startDate.getTime();
 
   // Convert the time difference to days
