@@ -118,7 +118,7 @@ export class Leave {
     // todo: actionPerformer can call this more than once. Return a message if already approved at the interactor layer.
     // todo: Manager can request and approve leaves by himself.
     const ret = await updateLeaveBalance(
-      userId,
+      leaveObj.empId,
       leaveObj.leaveType,
       getDateDiff(leaveObj.startDate, leaveObj.endDate),
     );
