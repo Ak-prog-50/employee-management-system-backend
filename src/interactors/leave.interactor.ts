@@ -73,7 +73,7 @@ export async function approveLeave(
   updateLeave: TUpdateLeaveDB,
 ): Promise<void | AppError> {
   try {
-    if (loggedInUser instanceof User) {
+    if (loggedInUser instanceof User && loggedInUser.empId !== null) {
       // Find the leave by leaveId in the database
       const leaveInstanceDB = await getLeaveById(leaveId);
       if (!leaveInstanceDB) {
@@ -87,7 +87,11 @@ export async function approveLeave(
           loggedInUser.email,
           "Logged In user Role not found!",
         );
-      const ret = await leave.approveLeave(loggedInUser.role);
+      const ret = await leave.approveLeave(
+        loggedInUser.role,
+        loggedInUser.empId,
+        leave,
+      );
       if (ret instanceof AppError) return ret;
       const updateRet = await updateLeave(leave, leaveId);
       // todo: notify employee

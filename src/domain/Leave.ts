@@ -1,5 +1,6 @@
 import { updateLeaveBalance } from "../data-access/leave.db";
 import LeaveModel from "../data-access/models/leave.model";
+import { getUserById, getUserModelById } from "../data-access/user.db";
 import {
   TCreateLeaveDB,
   TUpdateLeaveDB,
@@ -71,12 +72,16 @@ export class Leave {
       );
     }
 
-    const ret = await updateLeaveBalance(
-      userId,
-      leaveObj.leaveType,
-      getDateDiff(leaveObj.startDate, leaveObj.endDate),
+    const gonnaTakeLeaves = await getDateDiff(
+      leaveObj.startDate,
+      leaveObj.endDate,
     );
-    if (ret instanceof AppError) return ret;
+    const user = await getUserModelById(userId);
+    if (user === null) return AppError.notFound("User is null");
+    const availableLeaves = user.entitLeaves - user.takenLeaves;
+    if (gonnaTakeLeaves > availableLeaves) {
+      return AppError.notAllowed("Not enough leaves!");
+    }
 
     const leave = new Leave({ ...leaveObj, status: LeaveStatus.Pending });
     // Save the leave request to the database or any appropriate data store
@@ -84,12 +89,22 @@ export class Leave {
     // todo: notify Manager ( save notifications to data store and display in ui. maybe send email of all requested leaves after every 24Hrs? )
   }
 
-  async approveLeave(actionPerformerRole: TRole): Promise<void | AppError> {
+  async approveLeave(
+    actionPerformerRole: TRole,
+    userId: number,
+    leaveObj: ILeaveParams,
+  ): Promise<void | AppError> {
     if (actionPerformerRole !== "manager")
       return AppError.notAllowed("User not allowed to approve leaves!");
     // actionPerformer manually reviews leave requests on client side
     // todo: actionPerformer can call this more than once. Return a message if already approved at the interactor layer.
     // todo: Manager can request and approve leaves by himself.
+    const ret = await updateLeaveBalance(
+      userId,
+      leaveObj.leaveType,
+      getDateDiff(leaveObj.startDate, leaveObj.endDate),
+    );
+    if (ret instanceof AppError) return ret;
     this.status = LeaveStatus.Approved;
   }
 
