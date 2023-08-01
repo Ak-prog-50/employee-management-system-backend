@@ -81,6 +81,7 @@ const updateLeave: TUpdateLeaveDB = async function (
 async function updateLeaveBalance(
   empId: number,
   leaveType: LeaveType,
+  leaveDays: number,
 ): Promise<AppError | null> {
   try {
     const user = await UserModel.findOne({ where: { empId } });
@@ -92,32 +93,32 @@ async function updateLeaveBalance(
     switch (leaveType) {
       case LeaveType.Casual:
         if (user.casualLeavesBalance > 0) {
-          await user.decrement(`${leaveType}LeavesBalance`);
-          await user.increment("takenLeaves");
+          await user.decrement(`${leaveType}LeavesBalance`, { by: leaveDays });
+          await user.increment("takenLeaves", { by: leaveDays });
         } else {
           throw new Error("Insufficient casual leave balance");
         }
         break;
       case LeaveType.Sick:
         if (user.sickLeavesBalance > 0) {
-          await user.decrement(`${leaveType}LeavesBalance`);
-          await user.increment("takenLeaves");
+          await user.decrement(`${leaveType}LeavesBalance`, { by: leaveDays });
+          await user.increment("takenLeaves", { by: leaveDays });
         } else {
           throw new Error("Insufficient sick leave balance");
         }
         break;
       case LeaveType.Annual:
         if (user.annualLeavesBalance > 0) {
-          await user.decrement(`${leaveType}LeavesBalance`);
-          await user.increment("takenLeaves");
+          await user.decrement(`${leaveType}LeavesBalance`, { by: leaveDays });
+          await user.increment("takenLeaves", { by: leaveDays });
         } else {
           throw new Error("Insufficient annual leave balance");
         }
         break;
       case LeaveType.Duty:
         if (user.dutyLeavesBalance > 0) {
-          await user.decrement(`${leaveType}LeavesBalance`);
-          await user.increment("takenLeaves");
+          await user.decrement(`${leaveType}LeavesBalance`, { by: leaveDays });
+          await user.increment("takenLeaves", { by: leaveDays });
         } else {
           throw new Error("Insufficient duty leave balance");
         }

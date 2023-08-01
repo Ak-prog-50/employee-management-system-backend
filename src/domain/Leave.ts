@@ -6,6 +6,7 @@ import {
 } from "../interactors/leave.interactor";
 import { TRole } from "../types/generalTypes";
 import AppError from "../utils/error-handling/AppErrror";
+import getDateDiff from "../utils/getDateDiff";
 
 export interface ILeaveParams {
   leaveId: number | null; // will be incremented automatically in db
@@ -70,7 +71,11 @@ export class Leave {
       );
     }
 
-    const ret = await updateLeaveBalance(userId, leaveObj.leaveType);
+    const ret = await updateLeaveBalance(
+      userId,
+      leaveObj.leaveType,
+      getDateDiff(leaveObj.startDate, leaveObj.endDate),
+    );
     if (ret instanceof AppError) return ret;
 
     const leave = new Leave({ ...leaveObj, status: LeaveStatus.Pending });
@@ -79,16 +84,13 @@ export class Leave {
     // todo: notify Manager ( save notifications to data store and display in ui. maybe send email of all requested leaves after every 24Hrs? )
   }
 
-  async approveLeave(
-    actionPerformerRole: TRole,
-  ): Promise<void | AppError> {
+  async approveLeave(actionPerformerRole: TRole): Promise<void | AppError> {
     if (actionPerformerRole !== "manager")
       return AppError.notAllowed("User not allowed to approve leaves!");
     // actionPerformer manually reviews leave requests on client side
     // todo: actionPerformer can call this more than once. Return a message if already approved at the interactor layer.
     // todo: Manager can request and approve leaves by himself.
     this.status = LeaveStatus.Approved;
-
   }
 
   async rejectLeave(
