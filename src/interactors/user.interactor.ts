@@ -9,6 +9,14 @@ import AppError from "../utils/error-handling/AppErrror";
 export type TSaveUser = (user: User, password: string) => Promise<UserModel>;
 export type TGetUserById = (empId: number) => Promise<User | null>;
 export type TGetUserModelById = (empId: number) => Promise<UserModel | null>;
+export type TUpdateUser = (
+  empId: number,
+  updateFields: Partial<User>,
+  updateUserDB: (
+    empId: number,
+    updateFields: Partial<User>,
+  ) => Promise<UserModel | null>,
+) => Promise<IinteractorReturn<UserModel | null>>;
 
 interface ICreateUserDB {
   saveUser: TSaveUser;
@@ -60,4 +68,36 @@ async function getUser(
   }
 }
 
-export { createUser, getUser };
+async function updateUser(
+  empId: number,
+  updateFields: Partial<User>,
+  updateUserDB: (
+    empId: number,
+    updateFields: Partial<User>,
+  ) => Promise<UserModel | null>, // Add this type to the required dependencies
+): Promise<IinteractorReturn<UserModel | null>> {
+  try {
+    // Perform the update using the updateUser function from the data layer
+    const updatedUser = await updateUserDB(empId, updateFields);
+
+    if (updatedUser === null) {
+      return {
+        sucessData: null,
+        appError: AppError.notFound("User with given id not found"),
+      };
+    }
+
+    return {
+      appError: null,
+      sucessData: updatedUser,
+    };
+  } catch (error) {
+    logger.debug("Error updating user:", error);
+    return {
+      sucessData: null,
+      appError: AppError.internal(empId.toString(), "Something went wrong!"),
+    };
+  }
+}
+
+export { createUser, getUser, updateUser };

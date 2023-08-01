@@ -2,7 +2,11 @@ import Employee from "../domain/Employee";
 import HRPerson from "../domain/HRPerson";
 import Manager from "../domain/Manager";
 import User from "../domain/User";
-import { TGetUserById, TGetUserModelById, TSaveUser } from "../interactors/user.interactor";
+import {
+  TGetUserById,
+  TGetUserModelById,
+  TSaveUser,
+} from "../interactors/user.interactor";
 import logger from "../logger";
 import UserModel from "./models/user.model";
 
@@ -11,6 +15,31 @@ const saveUser: TSaveUser = async function (user: User, password: string) {
   const userInstance = new UserModel({ ...user, protectedPassword: password });
   return await userInstance.save();
 };
+
+async function updateUserDB(
+  empId: number,
+  updateFields: Partial<User>,
+): Promise<UserModel | null> {
+  try {
+    const user = await UserModel.findByPk(empId);
+
+    if (!user) {
+      logger.error("User not found");
+      return null;
+    }
+
+    // Update the fields in the user instance
+    Object.assign(user, updateFields);
+
+    // Save the changes to the database
+    await user.save();
+
+    return user;
+  } catch (error) {
+    logger.error("Error updating user:", error);
+    return null;
+  }
+}
 
 const getUserById: TGetUserById = async (empId) => {
   // do a db query get user object.
@@ -43,4 +72,4 @@ async function findUserByEmail(email: string): Promise<UserModel | null> {
   return await UserModel.findOne({ where: { email: email } });
 }
 
-export { getUserById, saveUser, findUserByEmail, getUserModelById };
+export { getUserById, saveUser, findUserByEmail, getUserModelById, updateUserDB};
