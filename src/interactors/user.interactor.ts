@@ -83,7 +83,7 @@ async function updateUser(
     if (updatedUser === null) {
       return {
         sucessData: null,
-        appError: AppError.notFound("User with given id not found"),
+        appError: AppError.notFound("User update failed!"),
       };
     }
 

@@ -183,8 +183,8 @@ const updateUserController: TExpressAsyncCallback = async function (
   res: IResponse,
   next: INext,
 ) {
-  const { empId } = req.params;
   const updateFields = req.body;
+  const { empId } = updateFields;
 
   // Check if the empId is a valid number
   if (typeof Number(empId) !== "number") {
