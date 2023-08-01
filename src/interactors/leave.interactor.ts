@@ -100,7 +100,7 @@ export async function approveLeave(
 
       const getManager = await getAllUsersByRole("manager");
       const managerEmail = getManager.map((reci) => reci.email);
-      const userEmail = getUserById(loggedInUser.empId);
+      const userEmail = (await getUserById(loggedInUser.empId))?.email;
       const mailOptions = {
         from: managerEmail, // Replace with your "From" email name and address
         to: userEmail,
@@ -150,7 +150,7 @@ export async function rejectLeave(
 
       const getManager = await getAllUsersByRole("manager");
       const managerEmail = getManager.map((reci) => reci.email);
-      const userEmail = getUserById(loggedInUser.empId);
+      const userEmail = (await getUserById(loggedInUser.empId))?.email;
       const mailOptions = {
         from: managerEmail, // Replace with your "From" email name and address
         to: userEmail,
